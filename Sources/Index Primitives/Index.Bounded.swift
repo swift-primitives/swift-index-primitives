@@ -48,8 +48,11 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         /// - Throws: `Error.outOfBounds` if `position < 0` or `position >= N`.
         @inlinable
         public init(_ position: Int) throws(Error) {
-            guard position >= 0, position < N else { throw .outOfBounds(position) }
-            self.bounded = Affine.Discrete.Bounded<N>(__unchecked: position)
+            do {
+                self.bounded = try Affine.Discrete.Bounded<N>(position)
+            } catch {
+                throw .outOfBounds(position)
+            }
         }
 
         /// Creates a bounded index from an `Affine.Discrete.Bounded<N>`.
@@ -67,10 +70,11 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         /// Creates from integer literal. Traps on invalid values.
         @inlinable
         public init(integerLiteral value: Int) {
-            guard value >= 0, value < N else {
+            do {
+                self = try Self(value)
+            } catch {
                 preconditionFailure("Index literal \(value) out of bounds for Bounded<\(N)>")
             }
-            self.bounded = Affine.Discrete.Bounded<N>(__unchecked: value)
         }
 
         /// Number of valid index values for this type.

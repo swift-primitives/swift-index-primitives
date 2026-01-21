@@ -56,10 +56,12 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// - Throws: `Error.negativePosition` if position is negative.
     @inlinable
     public init(_ position: Int) throws(Error) {
-        guard position >= 0 else {
+        do {
+            let pos = try Affine.Discrete.Position(position)
+            self.init(__rawValue: pos)
+        } catch {
             throw .negativePosition(position)
         }
-        self.init(__rawValue: Affine.Discrete.Position(__unchecked: position))
     }
 
     /// Unchecked construction (unsafe).
