@@ -146,7 +146,7 @@ extension Tagged.Bounded where RawValue == Affine.Discrete.Position, Tag: ~Copya
     /// always non-negative and valid.
     @inlinable
     public var unbounded: Index<Tag> {
-        Index<Tag>(__unchecked: rawValue)
+        Index<Tag>(__unchecked: (), position: rawValue)
     }
 }
 
