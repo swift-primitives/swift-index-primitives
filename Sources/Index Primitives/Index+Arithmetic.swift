@@ -9,88 +9,114 @@
 //
 // ===----------------------------------------------------------------------===//
 
-// MARK: - Index + Offset → Index
+// Index Affine Arithmetic
+//
+// Index follows affine space semantics from category theory:
+// - Index is a "point" in 1D discrete affine space
+// - Offset is a "vector" (displacement between points)
+//
+// Affine operations:
+// - Point - Point → Vector (displacement)
+// - Point + Vector → Point (translation)
+// - Point - Vector → Point (translation)
+// - Vector + Vector → Vector (vector addition)
+// - Point + Point → undefined (intentionally unsupported)
+
+// MARK: - Index + Offset → Index? (Point + Vector → Point)
 
 /// Advances an index by an offset.
 ///
-/// - Throws: `Index.Error.negativePosition` if the result would be negative.
+/// - Returns: The new index, or `nil` if the result would be negative.
 @inlinable
-public func + <Element: ~Copyable>(lhs: Index<Element>, rhs: Index<Element>.Offset) throws(Index<Element>.Error) -> Index<Element> {
-    try Index<Element>(lhs.position + rhs.rawValue)
+public func + <Element: ~Copyable>(
+    lhs: Index<Element>,
+    rhs: Index<Element>.Offset
+) -> Index<Element>? {
+    (lhs.position + rhs.displacement).map { Index($0) }
 }
 
 /// Advances an index by an offset (commutative).
 ///
-/// - Throws: `Index.Error.negativePosition` if the result would be negative.
+/// - Returns: The new index, or `nil` if the result would be negative.
 @inlinable
-public func + <Element: ~Copyable>(lhs: Index<Element>.Offset, rhs: Index<Element>) throws(Index<Element>.Error) -> Index<Element> {
-    try Index<Element>(lhs.rawValue + rhs.position)
+public func + <Element: ~Copyable>(
+    lhs: Index<Element>.Offset,
+    rhs: Index<Element>
+) -> Index<Element>? {
+    (lhs.displacement + rhs.position).map { Index($0) }
 }
+
+// MARK: - Index - Offset → Index? (Point - Vector → Point)
 
 /// Retreats an index by an offset.
 ///
-/// - Throws: `Index.Error.negativePosition` if the result would be negative.
+/// - Returns: The new index, or `nil` if the result would be negative.
 @inlinable
-public func - <Element: ~Copyable>(lhs: Index<Element>, rhs: Index<Element>.Offset) throws(Index<Element>.Error) -> Index<Element> {
-    try Index<Element>(lhs.position - rhs.rawValue)
+public func - <Element: ~Copyable>(
+    lhs: Index<Element>,
+    rhs: Index<Element>.Offset
+) -> Index<Element>? {
+    (lhs.position - rhs.displacement).map { Index($0) }
 }
 
-// MARK: - Index - Index → Offset
+// MARK: - Index - Index → Offset (Point - Point → Vector)
 
-/// Returns the signed offset between two indices.
+/// Returns the signed offset (displacement) between two indices.
 ///
 /// The result is positive if `lhs > rhs`, negative if `lhs < rhs`.
+/// This is the fundamental affine operation: point difference yields a vector.
 @inlinable
-public func - <Element: ~Copyable>(lhs: Index<Element>, rhs: Index<Element>) -> Index<Element>.Offset {
+public func - <Element: ~Copyable>(
+    lhs: Index<Element>,
+    rhs: Index<Element>
+) -> Index<Element>.Offset {
     Index<Element>.Offset(lhs.position - rhs.position)
 }
 
-// MARK: - Offset ± Offset → Offset
+// MARK: - Offset ± Offset → Offset (Vector ± Vector → Vector)
 
-/// Adds two offsets.
+/// Adds two offsets (vector addition).
 @inlinable
-public func + <Element: ~Copyable>(lhs: Index<Element>.Offset, rhs: Index<Element>.Offset) -> Index<Element>.Offset {
-    Index<Element>.Offset(lhs.rawValue + rhs.rawValue)
+public func + <Element: ~Copyable>(
+    lhs: Index<Element>.Offset,
+    rhs: Index<Element>.Offset
+) -> Index<Element>.Offset {
+    Index<Element>.Offset(lhs.displacement + rhs.displacement)
 }
 
 /// Subtracts two offsets.
 @inlinable
-public func - <Element: ~Copyable>(lhs: Index<Element>.Offset, rhs: Index<Element>.Offset) -> Index<Element>.Offset {
-    Index<Element>.Offset(lhs.rawValue - rhs.rawValue)
+public func - <Element: ~Copyable>(
+    lhs: Index<Element>.Offset,
+    rhs: Index<Element>.Offset
+) -> Index<Element>.Offset {
+    Index<Element>.Offset(lhs.displacement - rhs.displacement)
 }
 
 /// Negates an offset.
 @inlinable
-public prefix func - <Element: ~Copyable>(offset: Index<Element>.Offset) -> Index<Element>.Offset {
-    Index<Element>.Offset(-offset.rawValue)
+public prefix func - <Element: ~Copyable>(
+    offset: Index<Element>.Offset
+) -> Index<Element>.Offset {
+    Index<Element>.Offset(-offset.displacement)
 }
 
 // MARK: - Compound Assignment
 
-/// Advances an index by an offset in place.
-///
-/// - Throws: `Index.Error.negativePosition` if the result would be negative.
-@inlinable
-public func += <Element: ~Copyable>(lhs: inout Index<Element>, rhs: Index<Element>.Offset) throws(Index<Element>.Error) {
-    lhs = try lhs + rhs
-}
-
-/// Retreats an index by an offset in place.
-///
-/// - Throws: `Index.Error.negativePosition` if the result would be negative.
-@inlinable
-public func -= <Element: ~Copyable>(lhs: inout Index<Element>, rhs: Index<Element>.Offset) throws(Index<Element>.Error) {
-    lhs = try lhs - rhs
-}
-
 /// Adds an offset to another offset in place.
 @inlinable
-public func += <Element: ~Copyable>(lhs: inout Index<Element>.Offset, rhs: Index<Element>.Offset) {
+public func += <Element: ~Copyable>(
+    lhs: inout Index<Element>.Offset,
+    rhs: Index<Element>.Offset
+) {
     lhs = lhs + rhs
 }
 
 /// Subtracts an offset from another offset in place.
 @inlinable
-public func -= <Element: ~Copyable>(lhs: inout Index<Element>.Offset, rhs: Index<Element>.Offset) {
+public func -= <Element: ~Copyable>(
+    lhs: inout Index<Element>.Offset,
+    rhs: Index<Element>.Offset
+) {
     lhs = lhs - rhs
 }

@@ -9,94 +9,81 @@
 //
 // ===----------------------------------------------------------------------===//
 
-/// A typed index representing a position in a collection of `Element`.
+public import Affine_Primitives
+@_spi(Internal) public import Identity_Primitives
+
+/// A phantom-typed index for type-safe collection access.
 ///
-/// `Index<T>` provides type-safe positions parameterized by what they index into.
-/// This enables collections to specialize storage based on the index type.
+/// `Index<Element>` wraps `Affine.Discrete.Position` with a phantom type
+/// that prevents indices from different collections being confused.
 ///
 /// ## Type Safety
 ///
-/// Different index types cannot be confused at compile time:
-///
 /// ```swift
-/// let bitIndex: Index<Bit> = 42
-/// let byteIndex: Index<UInt8> = 42
-/// // bitIndex == byteIndex  // Does not compile - different types
+/// let bitIndex: Index<Bit> = try Index(5)
+/// let byteIndex: Index<Byte> = try Index(5)
+/// // bitIndex == byteIndex  // Compile error - different types
 /// ```
 ///
-/// ## Typed Arithmetic
+/// ## Arithmetic
 ///
-/// Index supports typed arithmetic with `Index.Offset`:
-///
-/// ```swift
-/// let idx = try Index<Bit>(5)
-/// let offset = Index<Bit>.Offset(3)
-/// let newIdx = try idx + offset  // Index<Bit>(8)
-/// let distance = newIdx - idx    // Index<Bit>.Offset(3)
-/// ```
-///
-/// ## Usage
+/// Index supports affine arithmetic with `Index<Element>.Offset`:
 ///
 /// ```swift
-/// let idx = try Index<Bit>(5)
-/// let idx2 = Index<Bit>(__unchecked: 10)  // Unchecked
-/// idx < idx2  // true
+/// let idx: Index<Bit> = try Index(5)
+/// let offset: Index<Bit>.Offset = 3
+/// let newIdx = (idx + offset)!  // Index<Bit> at position 8
+/// let distance = newIdx - idx   // Offset of 3
 /// ```
-public struct Index<Element: ~Copyable>: Hashable, Comparable, Sendable {
-    /// The position value.
-    public let position: Int
+public typealias Index<Element: ~Copyable> = Tagged<Element, Affine.Discrete.Position>
 
-    /// Creates an index at the given position.
+// MARK: - Index Construction
+
+extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+    /// The underlying position.
+    @inlinable
+    public var position: Affine.Discrete.Position { rawValue }
+
+    /// Construct from a validated position.
+    @inlinable
+    public init(_ position: Affine.Discrete.Position) {
+        self.init(__rawValue: position)
+    }
+
+    /// Construct from an integer, throwing if negative.
     ///
     /// - Parameter position: The position value. Must be non-negative.
-    /// - Throws: `Index.Error.negativePosition` if `position < 0`.
+    /// - Throws: `Error.negativePosition` if position is negative.
     @inlinable
-    public init(_ position: Int) throws(Index<Element>.Error) {
-        guard position >= 0 else { throw .negativePosition(position) }
-        self.position = position
+    public init(_ position: Int) throws(Error) {
+        guard position >= 0 else {
+            throw .negativePosition(position)
+        }
+        self.init(__rawValue: Affine.Discrete.Position(__unchecked: position))
     }
 
-    /// Creates an index without bounds checking.
-    ///
-    /// - Parameter position: Must be non-negative.
-    /// - Warning: No validation is performed. Use only when the value
-    ///   is known to be non-negative.
+    /// Unchecked construction (unsafe).
     @inlinable
     public init(__unchecked position: Int) {
-        self.position = position
-    }
-
-    @inlinable
-    public static func < (lhs: Self, rhs: Self) -> Bool {
-        lhs.position < rhs.position
+        self.init(__rawValue: Affine.Discrete.Position(__unchecked: position))
     }
 }
 
-// MARK: - ExpressibleByIntegerLiteral
-//
-// Index intentionally does NOT conform to ExpressibleByIntegerLiteral.
-//
-// The checked initializer `init(_ position: Int)` throws for negative values,
-// and ExpressibleByIntegerLiteral requires a non-throwing initializer.
-//
-// To create an index:
-// - Checked: `try Index<T>(5)` - throws if negative
-// - Unchecked: `Index<T>(__unchecked: 5)` - caller guarantees non-negative
+// MARK: - Index.Error
 
-extension Index: CustomStringConvertible where Element: ~Copyable {
-    public var description: String {
-        "Index<\(Element.self)>(\(position))"
+extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+    /// Error type for Index construction.
+    public enum Error: Swift.Error, Hashable, Sendable {
+        case negativePosition(Int)
     }
 }
 
-// MARK: - Offset
+// MARK: - Index.Offset
 
-extension Index where Element: ~Copyable {
-    /// A signed offset between indices of the same type.
+extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+    /// The displacement type for this index.
     ///
-    /// Represents the directed distance between two indices. The sign
-    /// indicates direction: positive offsets move forward (toward higher
-    /// indices), negative offsets move backward.
+    /// Wraps `Affine.Discrete.Displacement` to maintain phantom type safety.
     ///
     /// ## Semantic Model
     ///
@@ -111,32 +98,43 @@ extension Index where Element: ~Copyable {
     /// let backward: Index<Bit>.Offset = -3
     /// let combined = forward + backward  // Offset(2)
     /// ```
-    public struct Offset: Hashable, Comparable, Sendable {
-        /// The underlying signed value.
-        public let rawValue: Int
+    public struct Offset: Hashable, Comparable, Sendable, ExpressibleByIntegerLiteral {
+        /// The underlying displacement.
+        public let displacement: Affine.Discrete.Displacement
+
+        /// Creates an offset from a displacement.
+        @inlinable
+        public init(_ displacement: Affine.Discrete.Displacement) {
+            self.displacement = displacement
+        }
 
         /// Creates an offset with the given signed value.
         @inlinable
         public init(_ rawValue: Int) {
-            self.rawValue = rawValue
+            self.displacement = Affine.Discrete.Displacement(rawValue)
         }
 
         @inlinable
+        public init(integerLiteral value: Int) {
+            self.displacement = Affine.Discrete.Displacement(value)
+        }
+
+        /// The underlying signed value.
+        @inlinable
+        public var rawValue: Int { displacement.rawValue }
+
+        @inlinable
         public static func < (lhs: Self, rhs: Self) -> Bool {
-            lhs.rawValue < rhs.rawValue
+            lhs.displacement < rhs.displacement
         }
     }
 }
 
-extension Index.Offset: ExpressibleByIntegerLiteral where Element: ~Copyable {
-    @inlinable
-    public init(integerLiteral value: Int) {
-        self.init(value)
-    }
-}
+// MARK: - CustomStringConvertible
 
-extension Index.Offset: CustomStringConvertible where Element: ~Copyable {
+extension Tagged: @retroactive CustomStringConvertible
+where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     public var description: String {
-        "Index<\(Element.self)>.Offset(\(rawValue))"
+        "Index<\(Tag.self)>(\(rawValue.rawValue))"
     }
 }

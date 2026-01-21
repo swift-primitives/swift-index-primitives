@@ -9,16 +9,19 @@
 //
 // ===----------------------------------------------------------------------===//
 
-/// Hoisted type for `Index.Safe`.
-///
 /// Accessor for safe index operations. All subscripts return `Optional`,
 /// returning `nil` for out-of-bounds access instead of trapping.
 ///
 /// Accessed via the `.safe` property on any `Collection`.
 ///
-/// - Note: This type is hoisted to module level with `__` prefix because
-///   `Index` is a namespace enum. The canonical name is `Index.Safe` (via typealias).
-public struct __IndexSafe<Base: Collection> {
+/// ## Example
+///
+/// ```swift
+/// let array = [1, 2, 3]
+/// array.safe[1]   // Optional(2)
+/// array.safe[10]  // nil
+/// ```
+public struct Safe<Base: Collection> {
     @usableFromInline
     let base: Base
 
@@ -28,16 +31,4 @@ public struct __IndexSafe<Base: Collection> {
     }
 }
 
-extension __IndexSafe: Sendable where Base: Sendable {}
-
-// MARK: - Typealias
-
-extension Index {
-    /// Safe index accessor for collections.
-    ///
-    /// All subscripts return `Optional`, returning `nil` for out-of-bounds
-    /// access instead of trapping.
-    ///
-    /// - SeeAlso: ``__IndexSafe``
-    public typealias Safe<Base: Collection> = __IndexSafe<Base>
-}
+extension Safe: Sendable where Base: Sendable {}

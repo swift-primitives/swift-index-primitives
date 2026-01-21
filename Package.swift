@@ -18,13 +18,15 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../swift-ordinal-primitives")
+        .package(path: "../swift-affine-primitives"),
+        .package(path: "../swift-identity-primitives")
     ],
     targets: [
         .target(
             name: "Index Primitives",
             dependencies: [
-                .product(name: "Ordinal Primitives", package: "swift-ordinal-primitives")
+                .product(name: "Affine Primitives", package: "swift-affine-primitives"),
+                .product(name: "Identity Primitives", package: "swift-identity-primitives")
             ]
         ),
         .testTarget(

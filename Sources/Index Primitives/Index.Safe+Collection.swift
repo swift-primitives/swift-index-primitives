@@ -31,7 +31,7 @@ extension Collection {
     /// let bad = array.safe[0..<10]   // nil (no crash)
     /// ```
     @inlinable
-    public var safe: __IndexSafe<Self> {
-        __IndexSafe(self)
+    public var safe: Safe<Self> {
+        Safe(self)
     }
 }

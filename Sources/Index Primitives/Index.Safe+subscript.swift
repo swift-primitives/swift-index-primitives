@@ -11,7 +11,7 @@
 
 // MARK: - Element Access
 
-extension __IndexSafe {
+extension Safe {
     /// Accesses the element at the specified index, returning `nil` if out of bounds.
     ///
     /// - Parameter index: The position of the element to access.
@@ -32,7 +32,7 @@ extension __IndexSafe {
 
 // MARK: - Range Access
 
-extension __IndexSafe {
+extension Safe {
     /// Accesses the subsequence at the specified range, returning `nil` if out of bounds.
     ///
     /// - Parameter bounds: The range of indices to access.
@@ -55,7 +55,7 @@ extension __IndexSafe {
 
 // MARK: - Integer Index Access
 
-extension __IndexSafe where Base.Index == Int {
+extension Safe where Base.Index == Int {
     /// Accesses the element at the specified integer index, returning `nil` if out of bounds.
     ///
     /// This overload safely converts arbitrary `FixedWidthInteger` types to `Int`.
