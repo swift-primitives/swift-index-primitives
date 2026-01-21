@@ -40,6 +40,9 @@ public typealias Index<Element: ~Copyable> = Tagged<Element, Affine.Discrete.Pos
 // MARK: - Index Construction
 
 extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+    
+    public static var zero: Self { .init(__unchecked: (), 0) }
+    
     /// The underlying position.
     @inlinable
     public var position: Affine.Discrete.Position { rawValue }
@@ -47,7 +50,7 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// Construct from a validated position.
     @inlinable
     public init(_ position: Affine.Discrete.Position) {
-        self.init(__rawValue: position)
+        self.init(__unchecked: (), position)
     }
 
     /// Construct from an integer, throwing if negative.
@@ -57,8 +60,8 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     @inlinable
     public init(_ position: Int) throws(Error) {
         do {
-            let pos = try Affine.Discrete.Position(position)
-            self.init(__rawValue: pos)
+            let position = try Affine.Discrete.Position(position)
+            self.init(__unchecked: (), position)
         } catch {
             throw .negativePosition(position)
         }
@@ -66,8 +69,8 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
 
     /// Unchecked construction (unsafe).
     @inlinable
-    public init(__unchecked position: Int) {
-        self.init(__rawValue: Affine.Discrete.Position(__unchecked: position))
+    public init(__unchecked: Void, position: Int) {
+        self.init(__unchecked: (), Affine.Discrete.Position(__unchecked: (), position))
     }
 }
 
