@@ -116,6 +116,24 @@ extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyabl
     }
 }
 
+// MARK: - Index from Count
+
+extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+    /// Creates an index from a count.
+    ///
+    /// This is the canonical way to create an `endIndex` from a collection's count.
+    /// Since `Count` is guaranteed non-negative, no validation is needed.
+    ///
+    /// ```swift
+    /// let count: Index<Element>.Count = 10
+    /// let endIndex = Index(count)  // Index at position 10
+    /// ```
+    @inlinable
+    public init(_ count: Self.Count) {
+        self.init(__unchecked: (), position: count.rawValue)
+    }
+}
+
 // MARK: - Index < Count Comparison
 
 /// Checks if an index is within bounds for a collection of the given count.
