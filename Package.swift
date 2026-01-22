@@ -15,17 +15,12 @@ let package = Package(
         .library(
             name: "Index Primitives",
             targets: ["Index Primitives"]
-        ),
-        .library(
-            name: "Hash Index Primitives",
-            targets: ["Hash Index Primitives"]
         )
     ],
     dependencies: [
         .package(path: "../swift-affine-primitives"),
         .package(path: "../swift-comparison-primitives"),
         .package(path: "../swift-identity-primitives"),
-        .package(path: "../swift-hash-primitives")
     ],
     targets: [
         .target(
@@ -36,23 +31,9 @@ let package = Package(
                 .product(name: "Identity Primitives", package: "swift-identity-primitives")
             ]
         ),
-        .target(
-            name: "Hash Index Primitives",
-            dependencies: [
-                "Index Primitives",
-                .product(name: "Hash Primitives", package: "swift-hash-primitives")
-            ]
-        ),
         .testTarget(
             name: "Index Primitives Tests",
             dependencies: ["Index Primitives"]
-        ),
-        .testTarget(
-            name: "Hash Index Primitives Tests",
-            dependencies: [
-                "Hash Index Primitives",
-                .product(name: "Hash Primitives", package: "swift-hash-primitives")
-            ]
         )
     ],
     swiftLanguageModes: [.v6]

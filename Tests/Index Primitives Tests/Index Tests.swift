@@ -29,19 +29,19 @@ extension IndexTests.Unit {
     @Test("init with valid position")
     func initWithValidPosition() throws {
         let index: Index<Int> = try Index(5)
-        #expect(index.position.rawValue == 5)
+        #expect(index == 5)
     }
 
     @Test("init with zero position")
     func initWithZeroPosition() throws {
         let index: Index<String> = try Index(0)
-        #expect(index.position.rawValue == 0)
+        #expect(index == 0)
     }
 
     @Test("unchecked init bypasses validation")
     func uncheckedInit() {
         let index: Index<Int> = Index(__unchecked: (), position: 42)
-        #expect(index.position.rawValue == 42)
+        #expect(index == 42)
     }
 
     @Test("position property returns rawValue")
@@ -117,7 +117,8 @@ extension IndexTests.EdgeCase {
     @Test("init with maximum Int position succeeds")
     func maxIntPosition() throws {
         let index: Index<Int> = try Index(Int.max)
-        #expect(index.position.rawValue == Int.max)
+        let expected: Index<Int> = try Index(Int.max)
+        #expect(index == expected)
     }
 
     @Test("error is equatable")

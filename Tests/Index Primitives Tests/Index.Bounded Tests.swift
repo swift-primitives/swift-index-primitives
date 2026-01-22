@@ -136,7 +136,7 @@ extension IndexBoundedTests.Unit {
     func unbounded() {
         let bounded: Index<Int>.Bounded<10> = 5
         let unbounded: Index<Int> = bounded.unbounded
-        #expect(unbounded.position.rawValue == 5)
+        #expect(unbounded == 5)
     }
 
     @Test("description includes type and bounds")
