@@ -40,7 +40,7 @@ extension IndexTests.Unit {
 
     @Test("unchecked init bypasses validation")
     func uncheckedInit() {
-        let index: Index<Int> = Index(__unchecked: 42)
+        let index: Index<Int> = Index(__unchecked: (), position: 42)
         #expect(index.position.rawValue == 42)
     }
 

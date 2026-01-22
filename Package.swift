@@ -19,6 +19,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../swift-affine-primitives"),
+        .package(path: "../swift-comparison-primitives"),
         .package(path: "../swift-identity-primitives")
     ],
     targets: [
@@ -26,6 +27,7 @@ let package = Package(
             name: "Index Primitives",
             dependencies: [
                 .product(name: "Affine Primitives", package: "swift-affine-primitives"),
+                .product(name: "Comparison Primitives", package: "swift-comparison-primitives"),
                 .product(name: "Identity Primitives", package: "swift-identity-primitives")
             ]
         ),
