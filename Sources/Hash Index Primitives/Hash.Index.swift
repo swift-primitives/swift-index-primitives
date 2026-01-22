@@ -10,19 +10,26 @@
 // ===----------------------------------------------------------------------===//
 
 public import Hash_Primitives
-internal import Index_Primitives
+public import Index_Primitives
 
 extension Hash {
-    /// A hash table mapping elements to their indices in external storage.
+    /// A hash table mapping elements to their typed indices in external storage.
     ///
-    /// `Hash.Index` provides O(1) average-case lookup for element positions,
-    /// supporting `~Copyable` elements through `Hash.Protocol`.
+    /// `Hash.Index<Element>` provides O(1) average-case lookup for element positions,
+    /// supporting `~Copyable` elements through `Hash.Protocol`. Positions are typed
+    /// using `Index_Primitives.Index<Element>` for compile-time safety.
     ///
     /// ## Design
     ///
     /// This is an open-addressed hash table using linear probing. It stores
-    /// `(hashValue, position)` pairs, where `position` refers to an index in
-    /// external storage (e.g., `Set.Ordered`'s element array).
+    /// `(hashValue, position)` pairs, where `position` is a typed `Index<Element>`
+    /// referring to an index in external storage (e.g., `Set.Ordered`'s element array).
+    ///
+    /// ## Type Safety
+    ///
+    /// The generic parameter `Element` provides phantom-type safety:
+    /// - `Hash.Index<Int>` positions cannot be mixed with `Hash.Index<String>` positions
+    /// - Compile-time prevention of index confusion between different collections
     ///
     /// ## Move-Only
     ///
@@ -33,25 +40,25 @@ extension Hash {
     ///
     /// ```swift
     /// struct OrderedSet<Element: ~Copyable & Hash.Protocol>: ~Copyable {
-    ///     var elements: [Element]
-    ///     var indices: Hash.Index
+    ///     var elements: Array<Element>.Bounded
+    ///     var indices: Hash.Index<Element>
     ///
     ///     func contains(_ element: borrowing Element) -> Bool {
     ///         indices.position(
-    ///             for: element,
-    ///             equals: { elements[$0] == element }
+    ///             forHash: element.hashValue,
+    ///             equals: { idx in elements.withElement(at: idx) { $0 == element } }
     ///         ) != nil
     ///     }
     /// }
     /// ```
     @safe
-    public struct Index: ~Copyable {
+    public struct Index<Element: ~Copyable>: ~Copyable {
         /// Hash values for each bucket.
         /// Uses sentinel values: 0 = empty, Int.min = deleted.
         @usableFromInline
         var _hashes: UnsafeMutablePointer<Int>
 
-        /// Positions in external storage for each bucket.
+        /// Positions in external storage for each bucket (stored as raw Int).
         @usableFromInline
         var _positions: UnsafeMutablePointer<Int>
 
@@ -137,12 +144,12 @@ extension Hash {
         ///   - hashValue: The hash value of the element to find.
         ///   - equals: A closure that checks if the element at a given position
         ///     matches the search element. Called for hash collisions.
-        /// - Returns: The position in external storage if found, or `nil`.
+        /// - Returns: The typed position in external storage if found, or `nil`.
         @inlinable
         public func position(
             forHash hashValue: Int,
-            equals: (Int) -> Bool
-        ) -> Int? {
+            equals: (Index_Primitives.Index<Element>) -> Bool
+        ) -> Index_Primitives.Index<Element>? {
             let hash = Self.normalize(hashValue)
             var bucket = Self.bucket(for: hash, capacity: _capacity)
 
@@ -154,7 +161,8 @@ extension Hash {
                 }
 
                 if storedHash == hash {
-                    let position = unsafe _positions[bucket]
+                    let rawPosition = unsafe _positions[bucket]
+                    let position = Index_Primitives.Index<Element>(__unchecked: (), position: rawPosition)
                     if equals(position) {
                         return position
                     }
@@ -174,7 +182,7 @@ extension Hash {
         @inlinable
         public func bucket(
             forHash hashValue: Int,
-            equals: (Int) -> Bool
+            equals: (Index_Primitives.Index<Element>) -> Bool
         ) -> Int? {
             let hash = Self.normalize(hashValue)
             var bucket = Self.bucket(for: hash, capacity: _capacity)
@@ -187,7 +195,8 @@ extension Hash {
                 }
 
                 if storedHash == hash {
-                    let position = unsafe _positions[bucket]
+                    let rawPosition = unsafe _positions[bucket]
+                    let position = Index_Primitives.Index<Element>(__unchecked: (), position: rawPosition)
                     if equals(position) {
                         return bucket
                     }
@@ -202,7 +211,7 @@ extension Hash {
         /// Inserts an element's position into the hash table.
         ///
         /// - Parameters:
-        ///   - position: The position in external storage.
+        ///   - position: The typed position in external storage.
         ///   - hashValue: The hash value of the element.
         ///   - equals: A closure that checks if the element at a given position
         ///     matches. Used to detect duplicates.
@@ -210,9 +219,9 @@ extension Hash {
         @inlinable
         @discardableResult
         public mutating func insert(
-            position: Int,
+            position: Index_Primitives.Index<Element>,
             hashValue: Int,
-            equals: (Int) -> Bool
+            equals: (Index_Primitives.Index<Element>) -> Bool
         ) -> Bool {
             if shouldGrow {
                 grow()
@@ -228,7 +237,7 @@ extension Hash {
                 if storedHash == Self.empty {
                     let insertBucket = firstDeleted ?? bucket
                     unsafe (_hashes[insertBucket] = hash)
-                    unsafe (_positions[insertBucket] = position)
+                    unsafe (_positions[insertBucket] = position.position.rawValue)
                     _count += 1
                     if firstDeleted == nil {
                         _occupied += 1
@@ -241,7 +250,8 @@ extension Hash {
                         firstDeleted = bucket
                     }
                 } else if storedHash == hash {
-                    let existingPosition = unsafe _positions[bucket]
+                    let rawPosition = unsafe _positions[bucket]
+                    let existingPosition = Index_Primitives.Index<Element>(__unchecked: (), position: rawPosition)
                     if equals(existingPosition) {
                         return false // Duplicate
                     }
@@ -254,11 +264,12 @@ extension Hash {
         /// Inserts without checking for duplicates.
         ///
         /// - Parameters:
-        ///   - position: The position in external storage.
+        ///   - position: The typed position in external storage.
         ///   - hashValue: The hash value of the element.
         @inlinable
-        public mutating func insertUnchecked(
-            position: Int,
+        public mutating func insert(
+            __unchecked: Void,
+            position: Index_Primitives.Index<Element>,
             hashValue: Int
         ) {
             if shouldGrow {
@@ -273,7 +284,7 @@ extension Hash {
 
                 if storedHash == Self.empty || storedHash == Self.deleted {
                     unsafe (_hashes[bucket] = hash)
-                    unsafe (_positions[bucket] = position)
+                    unsafe (_positions[bucket] = position.position.rawValue)
                     _count += 1
                     if storedHash == Self.empty {
                         _occupied += 1
@@ -293,21 +304,21 @@ extension Hash {
         ///   - hashValue: The hash value of the element to remove.
         ///   - equals: A closure that checks if the element at a given position
         ///     matches the element to remove.
-        /// - Returns: The position that was removed, or `nil` if not found.
+        /// - Returns: The typed position that was removed, or `nil` if not found.
         @inlinable
         @discardableResult
         public mutating func remove(
             hashValue: Int,
-            equals: (Int) -> Bool
-        ) -> Int? {
+            equals: (Index_Primitives.Index<Element>) -> Bool
+        ) -> Index_Primitives.Index<Element>? {
             guard let bucket = bucket(forHash: hashValue, equals: equals) else {
                 return nil
             }
 
-            let position = unsafe _positions[bucket]
+            let rawPosition = unsafe _positions[bucket]
             unsafe (_hashes[bucket] = Self.deleted)
             _count -= 1
-            return position
+            return Index_Primitives.Index<Element>(__unchecked: (), position: rawPosition)
         }
 
         /// Removes the element at a specific bucket.
@@ -354,13 +365,14 @@ extension Hash {
         /// When an element at `removedPosition` is removed from external storage,
         /// all positions greater than `removedPosition` must be decremented.
         ///
-        /// - Parameter removedPosition: The position that was removed.
+        /// - Parameter removedPosition: The typed position that was removed.
         @inlinable
-        public mutating func decrementPositions(after removedPosition: Int) {
+        public mutating func decrementPositions(after removedPosition: Index_Primitives.Index<Element>) {
+            let removedRaw = removedPosition.position.rawValue
             for i in 0..<_capacity {
                 let hash = unsafe _hashes[i]
                 if hash != Self.empty && hash != Self.deleted {
-                    if unsafe _positions[i] > removedPosition {
+                    if unsafe _positions[i] > removedRaw {
                         unsafe (_positions[i] -= 1)
                     }
                 }
@@ -438,4 +450,4 @@ extension Hash {
 
 // MARK: - Sendable
 
-extension Hash.Index: @unchecked Sendable {}
+extension Hash.Index: @unchecked Sendable where Element: ~Copyable {}

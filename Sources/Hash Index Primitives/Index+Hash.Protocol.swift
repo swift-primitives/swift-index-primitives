@@ -14,13 +14,12 @@ public import Index_Primitives
 
 // MARK: - Index: Hash.Protocol
 
+// Note: The `==` requirement is satisfied by Index+Comparison.Protocol.swift
+// which provides `Comparison.Protocol` conformance with identical signature.
+// This avoids ambiguous `==` operators.
+
 extension Tagged: @retroactive Hash.`Protocol`
 where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    @inlinable
-    public static func == (lhs: borrowing Self, rhs: borrowing Self) -> Bool {
-        lhs.rawValue == rhs.rawValue
-    }
-
     @inlinable
     public borrowing func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue)

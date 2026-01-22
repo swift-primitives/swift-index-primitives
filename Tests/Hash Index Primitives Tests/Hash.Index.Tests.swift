@@ -11,32 +11,30 @@
 
 import Testing
 import Hash_Primitives
+import Index_Primitives
 @testable import Hash_Index_Primitives
 
-// Note: Swift Testing's #expect macro has issues with ~Copyable types in property access.
-// Workaround: Extract values to local Copyable variables before using #expect.
+// Test element type for phantom typing
+struct TestElement {}
 
 @Suite("Hash.Index Tests")
 struct HashIndexTests {
+
     @Test("Empty hash index")
     func emptyHashIndex() {
-        let index = Hash.Index()
-        let isEmpty = index.isEmpty
-        let count = index.count
-        #expect(isEmpty == true)
-        #expect(count == 0)
+        let index = Hash.Index<TestElement>()
+        #expect(index.isEmpty == true)
+        #expect(index.count == 0)
     }
 
     @Test("Insert and lookup")
     func insertAndLookup() {
-        var index = Hash.Index()
+        var index = Hash.Index<TestElement>()
 
         // Insert position 0 with hash 42
         let inserted = index.insert(position: 0, hashValue: 42, equals: { _ in false })
         #expect(inserted == true)
-
-        let count = index.count
-        #expect(count == 1)
+        #expect(index.count == 1)
 
         // Lookup should find it
         let found = index.position(forHash: 42, equals: { $0 == 0 })
@@ -49,7 +47,7 @@ struct HashIndexTests {
 
     @Test("Duplicate rejection")
     func duplicateRejection() {
-        var index = Hash.Index()
+        var index = Hash.Index<TestElement>()
 
         let first = index.insert(position: 0, hashValue: 42, equals: { _ in false })
         #expect(first == true)
@@ -57,26 +55,20 @@ struct HashIndexTests {
         // Same hash, equals returns true → duplicate
         let duplicate = index.insert(position: 1, hashValue: 42, equals: { $0 == 0 })
         #expect(duplicate == false)
-
-        let count = index.count
-        #expect(count == 1)
+        #expect(index.count == 1)
     }
 
     @Test("Removal")
     func removal() {
-        var index = Hash.Index()
+        var index = Hash.Index<TestElement>()
 
         index.insert(position: 0, hashValue: 42, equals: { _ in false })
         index.insert(position: 1, hashValue: 99, equals: { _ in false })
-
-        let countBefore = index.count
-        #expect(countBefore == 2)
+        #expect(index.count == 2)
 
         let removed = index.remove(hashValue: 42, equals: { $0 == 0 })
         #expect(removed == 0)
-
-        let countAfter = index.count
-        #expect(countAfter == 1)
+        #expect(index.count == 1)
 
         // Should not find removed element
         let notFound = index.position(forHash: 42, equals: { $0 == 0 })
@@ -89,101 +81,106 @@ struct HashIndexTests {
 
     @Test("Position decrement after removal")
     func positionDecrementAfterRemoval() {
-        var index = Hash.Index()
+        var index = Hash.Index<TestElement>()
 
         // Insert positions 0, 1, 2
-        index.insertUnchecked(position: 0, hashValue: 10)
-        index.insertUnchecked(position: 1, hashValue: 20)
-        index.insertUnchecked(position: 2, hashValue: 30)
+        index.insert(__unchecked: (), position: 0, hashValue: 10)
+        index.insert(__unchecked: (), position: 1, hashValue: 20)
+        index.insert(__unchecked: (), position: 2, hashValue: 30)
 
         // Remove from external storage at position 1
         index.remove(hashValue: 20, equals: { $0 == 1 })
         index.decrementPositions(after: 1)
 
         // Position 0 unchanged
-        let pos0 = index.position(forHash: 10, equals: { $0 == 0 })
-        #expect(pos0 == 0)
+        #expect(index.position(forHash: 10, equals: { $0 == 0 }) == 0)
 
         // Position 2 now at position 1
-        let pos1 = index.position(forHash: 30, equals: { $0 == 1 })
-        #expect(pos1 == 1)
+        #expect(index.position(forHash: 30, equals: { $0 == 1 }) == 1)
     }
 
     @Test("Growth under load")
-    func growthUnderLoad() {
-        var index = Hash.Index(minimumCapacity: 4)
+    func growthUnderLoad() throws {
+        var index = Hash.Index<TestElement>(minimumCapacity: 4)
         let initialCapacity = index.capacity
 
         // Insert enough elements to trigger growth
-        for i in 0..<20 {
-            index.insertUnchecked(position: i, hashValue: i * 7)
+        for i: Index<TestElement> in try (0..<20).map(Index.init) {
+            index.insert(__unchecked: (), position: i, hashValue: i.position.rawValue * 7)
         }
 
-        let count = index.count
-        let capacity = index.capacity
-        #expect(count == 20)
-        #expect(capacity > initialCapacity)
+        #expect(index.count == 20)
+        #expect(index.capacity > initialCapacity)
 
         // All elements should still be findable
-        for i in 0..<20 {
-            let found = index.position(forHash: i * 7, equals: { $0 == i })
-            #expect(found == i)
+        for i: Index<TestElement> in try (0..<20).map(Index.init) {
+            #expect(index.position(forHash: i.position.rawValue * 7, equals: { $0 == i }) == i)
         }
     }
 
     @Test("Remove all keeping capacity")
-    func removeAllKeepingCapacity() {
-        var index = Hash.Index()
+    func removeAllKeepingCapacity() throws {
+        var index = Hash.Index<TestElement>()
 
-        for i in 0..<10 {
-            index.insertUnchecked(position: i, hashValue: i * 3)
+        for i: Index<TestElement> in try (0..<10).map(Index.init) {
+            index.insert(__unchecked: (), position: i, hashValue: i.position.rawValue * 3)
         }
 
         let capacityBefore = index.capacity
         index.removeAll(keepingCapacity: true)
 
-        let isEmpty = index.isEmpty
-        let count = index.count
-        let capacityAfter = index.capacity
-        #expect(isEmpty == true)
-        #expect(count == 0)
-        #expect(capacityAfter == capacityBefore)
+        #expect(index.isEmpty == true)
+        #expect(index.count == 0)
+        #expect(index.capacity == capacityBefore)
     }
 
     @Test("Remove all releasing capacity")
-    func removeAllReleasingCapacity() {
-        var index = Hash.Index(minimumCapacity: 100)
+    func removeAllReleasingCapacity() throws {
+        var index = Hash.Index<TestElement>(minimumCapacity: 100)
 
-        for i in 0..<50 {
-            index.insertUnchecked(position: i, hashValue: i * 5)
+        for i: Index<TestElement> in try (0..<50).map(Index.init) {
+            index.insert(__unchecked: (), position: i, hashValue: i.position.rawValue * 5)
         }
 
         index.removeAll(keepingCapacity: false)
 
-        let isEmpty = index.isEmpty
-        let count = index.count
-        #expect(isEmpty == true)
-        #expect(count == 0)
+        #expect(index.isEmpty == true)
+        #expect(index.count == 0)
     }
 
     @Test("Hash collision handling")
     func hashCollisionHandling() {
-        var index = Hash.Index()
+        var index = Hash.Index<TestElement>()
 
         // Insert multiple elements with the same hash
         index.insert(position: 0, hashValue: 42, equals: { _ in false })
         index.insert(position: 1, hashValue: 42, equals: { _ in false })
         index.insert(position: 2, hashValue: 42, equals: { _ in false })
 
-        let count = index.count
-        #expect(count == 3)
+        #expect(index.count == 3)
 
         // Each should be findable with correct equals
-        let found0 = index.position(forHash: 42, equals: { $0 == 0 })
-        let found1 = index.position(forHash: 42, equals: { $0 == 1 })
-        let found2 = index.position(forHash: 42, equals: { $0 == 2 })
-        #expect(found0 == 0)
-        #expect(found1 == 1)
-        #expect(found2 == 2)
+        #expect(index.position(forHash: 42, equals: { $0 == 0 }) == 0)
+        #expect(index.position(forHash: 42, equals: { $0 == 1 }) == 1)
+        #expect(index.position(forHash: 42, equals: { $0 == 2 }) == 2)
+    }
+
+    @Test("Type safety - different element types are distinct")
+    func typeSafety() {
+        // Hash.Index<TypeA> and Hash.Index<TypeB> are different types
+        struct TypeA {}
+        struct TypeB {}
+
+        var indexA = Hash.Index<TypeA>()
+        var indexB = Hash.Index<TypeB>()
+
+        indexA.insert(position: 0, hashValue: 42, equals: { _ in false })
+        indexB.insert(position: 0, hashValue: 42, equals: { _ in false })
+
+        // These are different types - positions cannot be mixed
+        // indexA.insert(position: Index<TypeB>(0), ...) would be a compile error
+
+        #expect(indexA.count == 1)
+        #expect(indexB.count == 1)
     }
 }
