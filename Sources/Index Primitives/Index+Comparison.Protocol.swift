@@ -11,17 +11,22 @@
 
 public import Affine_Primitives
 public import Comparison_Primitives
+public import Equation_Primitives
 @_spi(Internal) public import Identity_Primitives
+
+// Equation.Protocol conformance required by Comparison.Protocol
+extension Tagged: @retroactive Equation.`Protocol`
+where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+    @inlinable
+    public static func == (lhs: borrowing Self, rhs: borrowing Self) -> Bool {
+        lhs.rawValue == rhs.rawValue
+    }
+}
 
 extension Tagged: @retroactive Comparison.`Protocol`
 where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     @inlinable
     public static func < (lhs: borrowing Self, rhs: borrowing Self) -> Bool {
         lhs.rawValue < rhs.rawValue
-    }
-
-    @inlinable
-    public static func == (lhs: borrowing Self, rhs: borrowing Self) -> Bool {
-        lhs.rawValue == rhs.rawValue
     }
 }

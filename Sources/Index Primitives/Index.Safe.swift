@@ -21,7 +21,7 @@
 /// array.safe[1]   // Optional(2)
 /// array.safe[10]  // nil
 /// ```
-public struct Safe<Base: Collection> {
+public struct Safe<Base: Swift.Collection> {
     @usableFromInline
     let base: Base
 
