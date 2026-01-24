@@ -30,3 +30,9 @@ where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         lhs.rawValue < rhs.rawValue
     }
 }
+//
+//extension Tagged: @retroactive Comparable
+//where RawValue == Affine.Discrete.Position {  }
+//
+//extension Tagged: @retroactive Equatable
+//where RawValue == Affine.Discrete.Position {  }

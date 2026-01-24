@@ -71,6 +71,18 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         public static var zero: Self {
             Self(Affine.Discrete.Count.zero)
         }
+        
+        /// The zero count.
+        @inlinable
+        public static var one: Self {
+            Self(Affine.Discrete.Count.one)
+        }
+        
+        /// The zero count.
+        @inlinable
+        public static var two: Self {
+            Self(Affine.Discrete.Count.two)
+        }
 
         @inlinable
         public static func < (lhs: Self, rhs: Self) -> Bool {
@@ -95,24 +107,6 @@ extension Tagged.Count: CustomStringConvertible
 where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     public var description: String {
         "Index<\(Tag.self)>.Count(\(rawValue))"
-    }
-}
-
-// MARK: - Arithmetic
-
-extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    /// Adds two counts.
-    @inlinable
-    public static func + (lhs: Self, rhs: Self) -> Self {
-        Self(lhs.count + rhs.count)
-    }
-
-    /// Subtracts one count from another.
-    ///
-    /// - Returns: The difference, or `nil` if the result would be negative.
-    @inlinable
-    public static func - (lhs: Self, rhs: Self) -> Self? {
-        (lhs.count - rhs.count).map(Self.init)
     }
 }
 
