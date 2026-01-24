@@ -12,7 +12,7 @@
 // MARK: - UnsafeMutablePointer + Index Arithmetic
 
 /// Advances a mutable pointer by a typed index offset.
-@inlinable
+@_transparent
 public func + <Pointee: ~Copyable>(
     lhs: UnsafeMutablePointer<Pointee>,
     rhs: Index<Pointee>
@@ -21,7 +21,7 @@ public func + <Pointee: ~Copyable>(
 }
 
 /// Advances a mutable pointer by a typed index offset.
-@inlinable
+@_transparent
 public func + <Pointee: ~Copyable>(
     lhs: Index<Pointee>,
     rhs: UnsafeMutablePointer<Pointee>
@@ -32,7 +32,7 @@ public func + <Pointee: ~Copyable>(
 // MARK: - UnsafePointer + Index Arithmetic
 
 /// Advances a pointer by a typed index offset.
-@inlinable
+@_transparent
 public func + <Pointee: ~Copyable>(
     lhs: UnsafePointer<Pointee>,
     rhs: Index<Pointee>
@@ -41,7 +41,7 @@ public func + <Pointee: ~Copyable>(
 }
 
 /// Advances a pointer by a typed index offset.
-@inlinable
+@_transparent
 public func + <Pointee: ~Copyable>(
     lhs: Index<Pointee>,
     rhs: UnsafePointer<Pointee>
@@ -64,13 +64,13 @@ extension UnsafeMutablePointer where Pointee: ~Copyable {
     ///
     /// - Parameter index: A typed index into the pointer's memory.
     /// - Returns: The element at the specified index.
-    @inlinable
+    @inlinable @inline(__always)
     public subscript(index: Index<Pointee>) -> Pointee {
-        @inline(__always)
+        @_transparent
         unsafeAddress {
             unsafe UnsafePointer(self + index)
         }
-        @inline(__always)
+        @_transparent
         unsafeMutableAddress {
             unsafe self + index
         }
@@ -92,9 +92,9 @@ extension UnsafePointer where Pointee: ~Copyable {
     ///
     /// - Parameter index: A typed index into the pointer's memory.
     /// - Returns: The element at the specified index.
-    @inlinable
+    @inlinable @inline(__always)
     public subscript(index: Index<Pointee>) -> Pointee {
-        @inline(__always)
+        @_transparent
         unsafeAddress {
             unsafe self + index
         }
