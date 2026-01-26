@@ -8,6 +8,36 @@
 import Affine_Primitives
 @_spi(Internal) import Identity_Primitives
 
+// MARK: - Count from Offset Conversion
+
+extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+    /// Creates a count from a non-negative offset.
+    ///
+    /// This is the canonical conversion from `Offset` to `Count`, validating that
+    /// the offset is non-negative (since `Count` represents a magnitude).
+    ///
+    /// - Parameter offset: The offset (must be non-negative).
+    /// - Throws: `Affine.Discrete.Count.Error.negativeValue` if offset is negative.
+    @inlinable
+    public init(_ offset: Tagged<Tag, RawValue>.Offset) throws(Affine.Discrete.Count.Error) {
+        guard offset.rawValue >= 0 else {
+            throw .negativeValue(offset.rawValue)
+        }
+        self.init(__unchecked: (), offset.rawValue)
+    }
+
+    /// Creates a count from an offset without validation.
+    ///
+    /// - Parameter offset: The offset (must be non-negative).
+    /// - Warning: No validation is performed. Use only when the offset is known
+    ///   to be non-negative, such as after subtracting indices where `end >= start`.
+    @inlinable
+    public init(__unchecked: Void, _ offset: Tagged<Tag, RawValue>.Offset) {
+        assert(offset.rawValue >= 0, "Offset must be non-negative for unchecked Count conversion")
+        self.init(__unchecked: (), offset.rawValue)
+    }
+}
+
 // MARK: - Arithmetic
 
 extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
