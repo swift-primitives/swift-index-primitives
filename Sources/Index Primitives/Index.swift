@@ -32,17 +32,17 @@ public import Affine_Primitives
 /// ```swift
 /// let idx: Index<Bit> = try Index(5)
 /// let offset = Index<Bit>.Offset(3)
-/// let newIdx = (idx + offset)!  // Index<Bit> at position 8
-/// let distance = newIdx - idx   // Offset of 3
+/// let newIdx = try idx + offset  // Index<Bit> at position 8
+/// let distance = newIdx - idx    // Offset of 3
 /// ```
 public typealias Index<Element: ~Copyable> = Tagged<Element, Affine.Discrete.Position>
 
 // MARK: - Index Construction
 
 extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    
+
     public static var zero: Self { .init(__unchecked: (), 0) }
-    
+
     /// The underlying position.
     @inlinable
     public var position: Affine.Discrete.Position { rawValue }
@@ -51,6 +51,20 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     @inlinable
     public init(_ position: Affine.Discrete.Position) {
         self.init(__unchecked: (), position)
+    }
+
+    // MARK: - Cross-Domain Retagging
+
+    /// Creates an index by retagging from another tag domain.
+    ///
+    /// This is a total operation - retagging preserves the position value
+    /// and cannot fail. Use this to convert indices between different
+    /// phantom-typed domains that share the same underlying position space.
+    ///
+    /// - Parameter other: An index from a different tag domain.
+    @inlinable
+    public init<Other: ~Copyable>(_ other: Tagged<Other, RawValue>) {
+        self.init(__unchecked: (), other.rawValue.rawValue)
     }
 
     /// Construct from an integer, throwing if negative.
@@ -86,60 +100,7 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     }
 }
 
-// MARK: - Index.Offset
 
-extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    /// The displacement type for this index.
-    ///
-    /// Wraps `Affine.Discrete.Displacement` to maintain phantom type safety.
-    ///
-    /// ## Semantic Model
-    ///
-    /// An offset is the result of subtracting two indices:
-    /// - `index2 - index1 → offset`
-    /// - `index1 + offset → index2`
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let forward = Index<Bit>.Offset(5)
-    /// let backward = Index<Bit>.Offset(-3)
-    /// let combined = forward + backward  // Offset(2)
-    /// ```
-    public struct Offset: Hashable, Comparable, Sendable {
-        /// The underlying displacement.
-        public let displacement: Affine.Discrete.Displacement
-
-        /// Creates an offset from a displacement.
-        @inlinable
-        public init(_ displacement: Affine.Discrete.Displacement) {
-            self.displacement = displacement
-        }
-
-        /// Creates an offset with the given signed value.
-        @inlinable
-        public init(_ rawValue: Int) {
-            self.displacement = Affine.Discrete.Displacement(rawValue)
-        }
-
-        /// The underlying signed value.
-        @inlinable
-        public var rawValue: Int { displacement.rawValue }
-
-        /// The zero offset (no displacement).
-        @inlinable
-        public static var zero: Self { Self(0) }
-
-        /// The unit offset (displacement of 1).
-        @inlinable
-        public static var one: Self { Self(1) }
-
-        @inlinable
-        public static func < (lhs: Self, rhs: Self) -> Bool {
-            lhs.displacement < rhs.displacement
-        }
-    }
-}
 
 // MARK: - CustomStringConvertible
 

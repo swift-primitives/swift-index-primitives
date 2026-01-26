@@ -22,41 +22,49 @@
 // - Vector + Vector → Vector (vector addition)
 // - Point + Point → undefined (intentionally unsupported)
 
-// MARK: - Index + Offset → Index? (Point + Vector → Point)
+// MARK: - Index + Offset → Index (Point + Vector → Point)
 
 /// Advances an index by an offset.
 ///
-/// - Returns: The new index, or `nil` if the result would be negative.
+/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
 @inlinable
 public func + <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Offset
-) -> Index<Element>? {
-    (lhs.position + rhs.displacement).map { Index.init($0) }
+) throws(Index<Element>.Error) -> Index<Element> {
+    let result = lhs.position.rawValue + rhs.rawValue
+    guard result >= 0 else {
+        throw .negativePosition(result)
+    }
+    return Index(__unchecked: (), result)
 }
 
 /// Advances an index by an offset (commutative).
 ///
-/// - Returns: The new index, or `nil` if the result would be negative.
+/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
 @inlinable
 public func + <Element: ~Copyable>(
     lhs: Index<Element>.Offset,
     rhs: Index<Element>
-) -> Index<Element>? {
-    (lhs.displacement + rhs.position).map { Index($0) }
+) throws(Index<Element>.Error) -> Index<Element> {
+    try rhs + lhs
 }
 
-// MARK: - Index - Offset → Index? (Point - Vector → Point)
+// MARK: - Index - Offset → Index (Point - Vector → Point)
 
 /// Retreats an index by an offset.
 ///
-/// - Returns: The new index, or `nil` if the result would be negative.
+/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
 @inlinable
 public func - <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Offset
-) -> Index<Element>? {
-    (lhs.position - rhs.displacement).map { Index($0) }
+) throws(Index<Element>.Error) -> Index<Element> {
+    let result = lhs.position.rawValue - rhs.rawValue
+    guard result >= 0 else {
+        throw .negativePosition(result)
+    }
+    return Index(__unchecked: (), result)
 }
 
 // MARK: - Index - Index → Offset (Point - Point → Vector)
@@ -131,10 +139,7 @@ public func += <Element: ~Copyable>(
     lhs: inout Index<Element>,
     rhs: Index<Element>.Offset
 ) throws(Index<Element>.Error) {
-    guard let result = lhs + rhs else {
-        throw .negativePosition(lhs.position.rawValue + rhs.rawValue)
-    }
-    lhs = result
+    lhs = try lhs + rhs
 }
 
 /// Retreats an index by an offset in place.
@@ -145,10 +150,7 @@ public func -= <Element: ~Copyable>(
     lhs: inout Index<Element>,
     rhs: Index<Element>.Offset
 ) throws(Index<Element>.Error) {
-    guard let result = lhs - rhs else {
-        throw .negativePosition(lhs.position.rawValue - rhs.rawValue)
-    }
-    lhs = result
+    lhs = try lhs - rhs
 }
 
 // MARK: - Index % Count → Index (Modular Projection)
@@ -157,7 +159,7 @@ public func -= <Element: ~Copyable>(
 ///
 /// This is the canonical operation for ring buffer wrap-around with runtime capacity:
 /// ```swift
-/// _storage.header.tail = (tail + 1)! % capacity
+/// _storage.header.tail = try (tail + .one) % capacity
 /// ```
 ///
 /// For compile-time bounded indices, use `Index.Bounded<N>` with cyclic group

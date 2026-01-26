@@ -70,20 +70,9 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
 
         /// The zero count.
         @inlinable
+        @_disfavoredOverload
         public static var zero: Self {
             Self(Affine.Discrete.Count.zero)
-        }
-        
-        /// The zero count.
-        @inlinable
-        public static var one: Self {
-            Self(Affine.Discrete.Count.one)
-        }
-        
-        /// The zero count.
-        @inlinable
-        public static var two: Self {
-            Self(Affine.Discrete.Count.two)
         }
 
         @inlinable
@@ -117,6 +106,18 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// ```
     @inlinable
     public init(_ count: Self.Count) {
+        self.init(__unchecked: (), count.rawValue)
+    }
+
+    /// Creates an index from a count in a different tag domain.
+    ///
+    /// This is total - Count is non-negative, so the resulting Index is valid.
+    /// Use this for cross-domain conversions where the count from one domain
+    /// becomes an index position in another domain.
+    ///
+    /// - Parameter count: A count from a different tag domain.
+    @inlinable
+    public init<Other: ~Copyable>(_ count: Tagged<Other, RawValue>.Count) {
         self.init(__unchecked: (), count.rawValue)
     }
 }
