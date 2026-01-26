@@ -121,6 +121,36 @@ public func -= <Element: ~Copyable>(
     lhs = lhs - rhs
 }
 
+// MARK: - Index ±= Offset (Compound Assignment)
+
+/// Advances an index by an offset in place.
+///
+/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
+@inlinable
+public func += <Element: ~Copyable>(
+    lhs: inout Index<Element>,
+    rhs: Index<Element>.Offset
+) throws(Index<Element>.Error) {
+    guard let result = lhs + rhs else {
+        throw .negativePosition(lhs.position.rawValue + rhs.rawValue)
+    }
+    lhs = result
+}
+
+/// Retreats an index by an offset in place.
+///
+/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
+@inlinable
+public func -= <Element: ~Copyable>(
+    lhs: inout Index<Element>,
+    rhs: Index<Element>.Offset
+) throws(Index<Element>.Error) {
+    guard let result = lhs - rhs else {
+        throw .negativePosition(lhs.position.rawValue - rhs.rawValue)
+    }
+    lhs = result
+}
+
 // MARK: - Index % Count → Index (Modular Projection)
 
 /// Projects an index position into a bounded range.

@@ -20,7 +20,6 @@ let package = Package(
     dependencies: [
         .package(path: "../swift-affine-primitives"),
         .package(path: "../swift-comparison-primitives"),
-        .package(path: "../swift-cyclic-primitives"),
         .package(path: "../swift-identity-primitives"),
     ],
     targets: [
@@ -29,7 +28,6 @@ let package = Package(
             dependencies: [
                 .product(name: "Affine Primitives", package: "swift-affine-primitives"),
                 .product(name: "Comparison Primitives", package: "swift-comparison-primitives"),
-                .product(name: "Cyclic Primitives", package: "swift-cyclic-primitives"),
                 .product(name: "Identity Primitives", package: "swift-identity-primitives"),
             ]
         ),
@@ -38,7 +36,6 @@ let package = Package(
             dependencies: [
                 "Index Primitives",
                 .product(name: "Affine Primitives", package: "swift-affine-primitives"),
-                .product(name: "Cyclic Primitives Test Support", package: "swift-cyclic-primitives"),
                 .product(name: "Identity Primitives Test Support", package: "swift-identity-primitives"),
             ],
             path: "Tests/Support"

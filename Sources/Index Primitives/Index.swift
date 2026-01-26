@@ -126,6 +126,14 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         @inlinable
         public var rawValue: Int { displacement.rawValue }
 
+        /// The zero offset (no displacement).
+        @inlinable
+        public static var zero: Self { Self(0) }
+
+        /// The unit offset (displacement of 1).
+        @inlinable
+        public static var one: Self { Self(1) }
+
         @inlinable
         public static func < (lhs: Self, rhs: Self) -> Bool {
             lhs.displacement < rhs.displacement
