@@ -28,7 +28,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Affine Primitives", package: "swift-affine-primitives"),
                 .product(name: "Comparison Primitives", package: "swift-comparison-primitives"),
-                .product(name: "Identity Primitives", package: "swift-identity-primitives")
+                .product(name: "Identity Primitives", package: "swift-identity-primitives"),
             ]
         ),
         .testTarget(
