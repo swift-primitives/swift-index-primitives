@@ -11,6 +11,7 @@
 
 import Testing
 @testable import Index_Primitives
+import Index_Primitives_Test_Support
 
 // Test tag type
 private enum IntTag {}
@@ -28,19 +29,19 @@ struct IndexOffsetTests {
 extension IndexOffsetTests.Unit {
     @Test("init with positive value")
     func initPositive() {
-        let offset: Index<IntTag>.Offset = Index<IntTag>.Offset(5)
+        let offset: Index<IntTag>.Offset = 5
         #expect(offset == 5)
     }
 
     @Test("init with negative value")
     func initNegative() {
-        let offset: Index<IntTag>.Offset = Index<IntTag>.Offset(-3)
+        let offset: Index<IntTag>.Offset = -3
         #expect(offset == -3)
     }
 
     @Test("init with zero")
     func initZero() {
-        let offset: Index<IntTag>.Offset = Index<IntTag>.Offset(0)
+        let offset: Index<IntTag>.Offset = 0
         #expect(offset == 0)
     }
 
@@ -92,12 +93,12 @@ extension IndexOffsetTests.EdgeCase {
     @Test("maximum Int offset")
     func maxIntOffset() {
         let offset: Index<IntTag>.Offset = Index<IntTag>.Offset(Int.max)
-        #expect(offset == Int.max)
+        #expect(offset.rawValue == Int.max)
     }
 
     @Test("minimum Int offset")
     func minIntOffset() {
         let offset: Index<IntTag>.Offset = Index<IntTag>.Offset(Int.min)
-        #expect(offset == Int.min)
+        #expect(offset.rawValue == Int.min)
     }
 }

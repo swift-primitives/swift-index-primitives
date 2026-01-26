@@ -31,7 +31,7 @@ public import Affine_Primitives
 ///
 /// ```swift
 /// let idx: Index<Bit> = try Index(5)
-/// let offset: Index<Bit>.Offset = 3
+/// let offset = Index<Bit>.Offset(3)
 /// let newIdx = (idx + offset)!  // Index<Bit> at position 8
 /// let distance = newIdx - idx   // Offset of 3
 /// ```
@@ -67,9 +67,12 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         }
     }
 
-    /// Unchecked construction (unsafe).
+    /// Unchecked construction.
+    ///
+    /// - Warning: No validation is performed. Use only when the value
+    ///   is known to be non-negative.
     @inlinable
-    public init(__unchecked: Void, position: Int) {
+    public init(__unchecked: Void, _ position: Int) {
         self.init(__unchecked: (), Affine.Discrete.Position(__unchecked: (), position))
     }
 }
@@ -99,11 +102,11 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// ## Example
     ///
     /// ```swift
-    /// let forward: Index<Bit>.Offset = 5
-    /// let backward: Index<Bit>.Offset = -3
+    /// let forward = Index<Bit>.Offset(5)
+    /// let backward = Index<Bit>.Offset(-3)
     /// let combined = forward + backward  // Offset(2)
     /// ```
-    public struct Offset: Hashable, Comparable, Sendable, ExpressibleByIntegerLiteral {
+    public struct Offset: Hashable, Comparable, Sendable {
         /// The underlying displacement.
         public let displacement: Affine.Discrete.Displacement
 
@@ -117,11 +120,6 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         @inlinable
         public init(_ rawValue: Int) {
             self.displacement = Affine.Discrete.Displacement(rawValue)
-        }
-
-        @inlinable
-        public init(integerLiteral value: Int) {
-            self.displacement = Affine.Discrete.Displacement(value)
         }
 
         /// The underlying signed value.

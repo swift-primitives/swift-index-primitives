@@ -11,6 +11,7 @@
 
 import Testing
 @testable import Index_Primitives
+import Index_Primitives_Test_Support
 
 private enum Bit {}
 private enum Byte {}
@@ -40,7 +41,7 @@ extension IndexTests.Unit {
 
     @Test("unchecked init bypasses validation")
     func uncheckedInit() {
-        let index: Index<Int> = Index(__unchecked: (), position: 42)
+        let index: Index<Int> = Index(__unchecked: (), 42)
         #expect(index == 42)
     }
 

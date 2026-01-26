@@ -11,6 +11,7 @@
 
 import Testing
 @testable import Index_Primitives
+import Index_Primitives_Test_Support
 
 
 // MARK: - Bounded Test Suites

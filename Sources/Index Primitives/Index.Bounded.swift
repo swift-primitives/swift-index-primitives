@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 import Affine_Primitives
+import Cyclic_Primitives
 @_spi(Internal) import Identity_Primitives
 
 extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
@@ -25,22 +26,20 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// // idx.rawValue is guaranteed to be in 0..<5
     /// ```
     ///
-    /// ## Integer Literals
+    /// ## Construction
     ///
-    /// Use literals for ergonomic access (traps on invalid):
+    /// Use the throwing initializer for safe construction:
     /// ```swift
-    /// let valid: Index<Int>.Bounded<5> = 3   // OK
-    /// let invalid: Index<Int>.Bounded<5> = 10  // Traps
+    /// let valid = try Index<Int>.Bounded<5>(3)    // OK
+    /// let invalid = try Index<Int>.Bounded<5>(10) // throws Error.outOfBounds
     /// ```
-    ///
-    /// Use `try` for throwing validation.
-    public struct Bounded<let N: Int>: Sendable, Hashable, Comparable, ExpressibleByIntegerLiteral {
-        /// The underlying bounded position, guaranteed to be in 0..<N.
-        public let bounded: Affine.Discrete.Bounded<N>
+    public struct Bounded<let N: Int>: Sendable, Hashable, Comparable {
+        /// The underlying cyclic group element, guaranteed to be in 0..<N.
+        public let cyclic: Cyclic.Group<N>.Element
 
         /// The underlying position value, guaranteed to be in 0..<N.
         @inlinable
-        public var rawValue: Int { bounded.rawValue }
+        public var rawValue: Int { cyclic.rawValue }
 
         /// Creates a bounded index from an integer.
         ///
@@ -49,32 +48,25 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         @inlinable
         public init(_ position: Int) throws(Error) {
             do {
-                self.bounded = try Affine.Discrete.Bounded<N>(position)
+                self.cyclic = try Cyclic.Group<N>.Element(position)
             } catch {
                 throw .outOfBounds(position)
             }
         }
 
-        /// Creates a bounded index from an `Affine.Discrete.Bounded<N>`.
+        /// Creates a bounded index from a `Cyclic.Group<N>.Element`.
         @inlinable
-        public init(_ bounded: Affine.Discrete.Bounded<N>) {
-            self.bounded = bounded
+        public init(_ cyclic: Cyclic.Group<N>.Element) {
+            self.cyclic = cyclic
         }
 
         /// Creates a bounded index without bounds checking.
+        ///
+        /// - Warning: No validation is performed. Use only when the value
+        ///   is known to be in bounds.
         @inlinable
         public init(__unchecked: Void, _ position: Int) {
-            self.bounded = Affine.Discrete.Bounded<N>(__unchecked: position)
-        }
-
-        /// Creates from integer literal. Traps on invalid values.
-        @inlinable
-        public init(integerLiteral value: Int) {
-            do {
-                self = try Self(value)
-            } catch {
-                preconditionFailure("Index literal \(value) out of bounds for Bounded<\(N)>")
-            }
+            self.cyclic = Cyclic.Group<N>.Element(__unchecked: (), position)
         }
 
         /// Number of valid index values for this type.
@@ -122,7 +114,7 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
 
         @inlinable
         public static func < (lhs: Self, rhs: Self) -> Bool {
-            lhs.bounded < rhs.bounded
+            lhs.cyclic < rhs.cyclic
         }
     }
 }
@@ -146,7 +138,7 @@ extension Tagged.Bounded where RawValue == Affine.Discrete.Position, Tag: ~Copya
     /// always non-negative and valid.
     @inlinable
     public var unbounded: Index<Tag> {
-        Index<Tag>(__unchecked: (), position: rawValue)
+        Index<Tag>(__unchecked: (), rawValue)
     }
 }
 
@@ -161,6 +153,55 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         let value = position.rawValue
         guard value >= 0, value < N else { return nil }
         return Bounded<N>(__unchecked: (), value)
+    }
+}
+
+// MARK: - Cyclic Group Arithmetic (ℤ/Nℤ)
+
+extension Tagged.Bounded where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+    /// The unit element (1) in the cyclic group ℤ/Nℤ.
+    ///
+    /// Use with `+` for ring buffer advancement:
+    /// ```swift
+    /// _tail = _tail + .one
+    /// ```
+    @inlinable
+    public static var one: Self { Self(Cyclic.Group<N>.Element.one) }
+
+    /// Cyclic group addition in ℤ/Nℤ.
+    ///
+    /// The result automatically wraps within `[0, N)`:
+    /// ```swift
+    /// let idx = try Index<Int>.Bounded<5>(4)
+    /// let next = idx + .one  // 0 (wraps)
+    /// ```
+    @inlinable
+    public static func + (lhs: Self, rhs: Self) -> Self {
+        Self(lhs.cyclic + rhs.cyclic)
+    }
+
+    /// Cyclic group subtraction in ℤ/Nℤ.
+    ///
+    /// The result automatically wraps within `[0, N)`:
+    /// ```swift
+    /// let idx = try Index<Int>.Bounded<5>(0)
+    /// let prev = idx - .one  // 4 (wraps)
+    /// ```
+    @inlinable
+    public static func - (lhs: Self, rhs: Self) -> Self {
+        Self(lhs.cyclic - rhs.cyclic)
+    }
+
+    /// Compound addition in ℤ/Nℤ.
+    @inlinable
+    public static func += (lhs: inout Self, rhs: Self) {
+        lhs = lhs + rhs
+    }
+
+    /// Compound subtraction in ℤ/Nℤ.
+    @inlinable
+    public static func -= (lhs: inout Self, rhs: Self) {
+        lhs = lhs - rhs
     }
 }
 

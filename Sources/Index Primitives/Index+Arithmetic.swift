@@ -32,7 +32,7 @@ public func + <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Offset
 ) -> Index<Element>? {
-    (lhs.position + rhs.displacement).map { Index($0) }
+    (lhs.position + rhs.displacement).map { Index.init($0) }
 }
 
 /// Advances an index by an offset (commutative).
@@ -121,4 +121,27 @@ public func -= <Element: ~Copyable>(
     lhs = lhs - rhs
 }
 
+// MARK: - Index % Count → Index (Modular Projection)
+
+/// Projects an index position into a bounded range.
+///
+/// This is the canonical operation for ring buffer wrap-around with runtime capacity:
+/// ```swift
+/// _storage.header.tail = (tail + 1)! % capacity
+/// ```
+///
+/// For compile-time bounded indices, use `Index.Bounded<N>` with cyclic group
+/// arithmetic (`+`, `-`) instead.
+///
+/// - Parameters:
+///   - lhs: The index to project.
+///   - rhs: The capacity (must be positive).
+/// - Returns: The projected index within `[0, rhs)`.
+@inlinable
+public func % <Element: ~Copyable>(
+    lhs: Index<Element>,
+    rhs: Index<Element>.Count
+) -> Index<Element> {
+    Index<Element>(__unchecked: (), lhs.position.rawValue % rhs.rawValue)
+}
 

@@ -21,8 +21,8 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// ## Type Safety
     ///
     /// ```swift
-    /// let graphCount: Index<GraphTag>.Count = 10
-    /// let bitCount: Index<Bit>.Count = 100
+    /// let graphCount = try Index<GraphTag>.Count(10)
+    /// let bitCount = try Index<Bit>.Count(100)
     ///
     /// let node: Index<GraphTag> = ...
     /// node < graphCount  // OK
@@ -32,7 +32,7 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// ## Usage
     ///
     /// ```swift
-    /// let count = Index<Tag>.Count(storage.count)
+    /// let count = try Index<Tag>.Count(storage.count)
     /// guard node < count else { return nil }
     /// ```
     public struct Count: Hashable, Comparable, Sendable {
@@ -61,8 +61,10 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         /// Creates a typed count without validation.
         ///
         /// - Parameter rawValue: Must be non-negative.
+        /// - Warning: No validation is performed. Use only when the value
+        ///   is known to be non-negative.
         @inlinable
-        public init(__unchecked rawValue: Int) {
+        public init(__unchecked: Void, _ rawValue: Int) {
             self.count = Affine.Discrete.Count(__unchecked: rawValue)
         }
 
@@ -91,15 +93,6 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     }
 }
 
-// MARK: - ExpressibleByIntegerLiteral
-
-extension Tagged.Count: ExpressibleByIntegerLiteral
-where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    @inlinable
-    public init(integerLiteral value: Int) {
-        self.count = Affine.Discrete.Count(integerLiteral: value)
-    }
-}
 
 // MARK: - CustomStringConvertible
 
@@ -119,12 +112,12 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// Since `Count` is guaranteed non-negative, no validation is needed.
     ///
     /// ```swift
-    /// let count: Index<Element>.Count = 10
+    /// let count = try Index<Element>.Count(10)
     /// let endIndex = Index(count)  // Index at position 10
     /// ```
     @inlinable
     public init(_ count: Self.Count) {
-        self.init(__unchecked: (), position: count.rawValue)
+        self.init(__unchecked: (), count.rawValue)
     }
 }
 
