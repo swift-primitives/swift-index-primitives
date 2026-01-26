@@ -26,27 +26,27 @@
 
 /// Advances an index by an offset.
 ///
-/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
+/// - Throws: `Ordinal.Position.Error.negativeSource` if the result would be negative.
 @inlinable
 public func + <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Offset
-) throws(Index<Element>.Error) -> Index<Element> {
-    let result = lhs.position.rawValue + rhs.rawValue
-    guard result >= 0 else {
-        throw .negativePosition(result)
+) throws(Ordinal.Position.Error) -> Index<Element> {
+    let result = Int(bitPattern: lhs.position.rawValue) + rhs.rawValue
+    guard result >= .zero else {
+        throw .negativeSource(result)
     }
-    return Index(__unchecked: (), result)
+    return Index(__unchecked: (), Ordinal.Position(UInt(result)))
 }
 
 /// Advances an index by an offset (commutative).
 ///
-/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
+/// - Throws: `Ordinal.Position.Error.negativeSource` if the result would be negative.
 @inlinable
 public func + <Element: ~Copyable>(
     lhs: Index<Element>.Offset,
     rhs: Index<Element>
-) throws(Index<Element>.Error) -> Index<Element> {
+) throws(Ordinal.Position.Error) -> Index<Element> {
     try rhs + lhs
 }
 
@@ -54,17 +54,17 @@ public func + <Element: ~Copyable>(
 
 /// Retreats an index by an offset.
 ///
-/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
+/// - Throws: `Ordinal.Position.Error.negativeSource` if the result would be negative.
 @inlinable
 public func - <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Offset
-) throws(Index<Element>.Error) -> Index<Element> {
-    let result = lhs.position.rawValue - rhs.rawValue
+) throws(Ordinal.Position.Error) -> Index<Element> {
+    let result = Int(bitPattern: lhs.position.rawValue) - rhs.rawValue
     guard result >= 0 else {
-        throw .negativePosition(result)
+        throw .negativeSource(result)
     }
-    return Index(__unchecked: (), result)
+    return Index(__unchecked: (), Ordinal.Position(UInt(result)))
 }
 
 // MARK: - Index - Index → Offset (Point - Point → Vector)
@@ -89,7 +89,7 @@ public func + <Element: ~Copyable>(
     lhs: Index<Element>.Offset,
     rhs: Index<Element>.Offset
 ) -> Index<Element>.Offset {
-    Index<Element>.Offset(lhs.displacement + rhs.displacement)
+    Index<Element>.Offset(lhs.vector + rhs.vector)
 }
 
 /// Subtracts two offsets.
@@ -98,7 +98,7 @@ public func - <Element: ~Copyable>(
     lhs: Index<Element>.Offset,
     rhs: Index<Element>.Offset
 ) -> Index<Element>.Offset {
-    Index<Element>.Offset(lhs.displacement - rhs.displacement)
+    Index<Element>.Offset(lhs.vector - rhs.vector)
 }
 
 /// Negates an offset.
@@ -106,7 +106,7 @@ public func - <Element: ~Copyable>(
 public prefix func - <Element: ~Copyable>(
     offset: Index<Element>.Offset
 ) -> Index<Element>.Offset {
-    Index<Element>.Offset(-offset.displacement)
+    Index<Element>.Offset(-offset.vector)
 }
 
 // MARK: - Compound Assignment
@@ -133,23 +133,23 @@ public func -= <Element: ~Copyable>(
 
 /// Advances an index by an offset in place.
 ///
-/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
+/// - Throws: `Ordinal.Position.Error.negativeSource` if the result would be negative.
 @inlinable
 public func += <Element: ~Copyable>(
     lhs: inout Index<Element>,
     rhs: Index<Element>.Offset
-) throws(Index<Element>.Error) {
+) throws(Ordinal.Position.Error) {
     lhs = try lhs + rhs
 }
 
 /// Retreats an index by an offset in place.
 ///
-/// - Throws: `Index<Element>.Error.negativePosition` if the result would be negative.
+/// - Throws: `Ordinal.Position.Error.negativeSource` if the result would be negative.
 @inlinable
 public func -= <Element: ~Copyable>(
     lhs: inout Index<Element>,
     rhs: Index<Element>.Offset
-) throws(Index<Element>.Error) {
+) throws(Ordinal.Position.Error) {
     lhs = try lhs - rhs
 }
 
@@ -174,6 +174,5 @@ public func % <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Count
 ) -> Index<Element> {
-    Index<Element>(__unchecked: (), lhs.position.rawValue % rhs.rawValue)
+    Index<Element>(__unchecked: (), Ordinal.Position(lhs.position.rawValue % rhs.rawValue))
 }
-

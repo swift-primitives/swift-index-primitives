@@ -17,7 +17,7 @@ public func + <Pointee: ~Copyable>(
     lhs: UnsafeMutablePointer<Pointee>,
     rhs: Index<Pointee>
 ) -> UnsafeMutablePointer<Pointee> {
-    unsafe lhs + rhs.position.rawValue
+    unsafe lhs + Int(rhs.position.rawValue)
 }
 
 /// Advances a mutable pointer by a typed index offset.
@@ -26,7 +26,7 @@ public func + <Pointee: ~Copyable>(
     lhs: Index<Pointee>,
     rhs: UnsafeMutablePointer<Pointee>
 ) -> UnsafeMutablePointer<Pointee> {
-    unsafe rhs + lhs.position.rawValue
+    unsafe rhs + Int(lhs.position.rawValue)
 }
 
 // MARK: - UnsafePointer + Index Arithmetic
@@ -37,7 +37,7 @@ public func + <Pointee: ~Copyable>(
     lhs: UnsafePointer<Pointee>,
     rhs: Index<Pointee>
 ) -> UnsafePointer<Pointee> {
-    unsafe lhs + rhs.position.rawValue
+    unsafe lhs + Int(rhs.position.rawValue)
 }
 
 /// Advances a pointer by a typed index offset.
@@ -46,7 +46,7 @@ public func + <Pointee: ~Copyable>(
     lhs: Index<Pointee>,
     rhs: UnsafePointer<Pointee>
 ) -> UnsafePointer<Pointee> {
-    unsafe rhs + lhs.position.rawValue
+    unsafe rhs + Int(lhs.position.rawValue)
 }
 
 // MARK: - UnsafeMutablePointer Subscript

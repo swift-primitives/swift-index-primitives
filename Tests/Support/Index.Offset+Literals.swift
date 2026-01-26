@@ -9,7 +9,6 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Affine_Primitives
 public import Index_Primitives
 @_spi(Internal) public import Identity_Primitives
 
@@ -18,7 +17,7 @@ public import Index_Primitives
 /// This conformance is available only for test targets. Production code should use
 /// `init(_:)` to construct offsets.
 extension Tagged.Offset: ExpressibleByIntegerLiteral
-where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+where RawValue == Ordinal.Position, Tag: ~Copyable {
     public init(integerLiteral value: Int) {
         self.init(value)
     }

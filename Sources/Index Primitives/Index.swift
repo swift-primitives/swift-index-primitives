@@ -9,12 +9,12 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Affine_Primitives
+public import Ordinal_Primitives
 @_spi(Internal) public import Identity_Primitives
 
 /// A phantom-typed index for type-safe collection access.
 ///
-/// `Index<Element>` wraps `Affine.Discrete.Position` with a phantom type
+/// `Index<Element>` wraps `Ordinal.Position` with a phantom type
 /// that prevents indices from different collections being confused.
 ///
 /// ## Type Safety
@@ -35,23 +35,17 @@ public import Affine_Primitives
 /// let newIdx = try idx + offset  // Index<Bit> at position 8
 /// let distance = newIdx - idx    // Offset of 3
 /// ```
-public typealias Index<Element: ~Copyable> = Tagged<Element, Affine.Discrete.Position>
+public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal.Position>
 
 // MARK: - Index Construction
 
-extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-
-    public static var zero: Self { .init(__unchecked: (), 0) }
-
+extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// The underlying position.
     @inlinable
-    public var position: Affine.Discrete.Position { rawValue }
+    public var position: Ordinal.Position { rawValue }
 
-    /// Construct from a validated position.
-    @inlinable
-    public init(_ position: Affine.Discrete.Position) {
-        self.init(__unchecked: (), position)
-    }
+    /// The zero index.
+    public static var zero: Self { .init(__unchecked: (), .zero) }
 
     // MARK: - Cross-Domain Retagging
 
@@ -64,48 +58,23 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// - Parameter other: An index from a different tag domain.
     @inlinable
     public init<Other: ~Copyable>(_ other: Tagged<Other, RawValue>) {
-        self.init(__unchecked: (), other.rawValue.rawValue)
+        self.init(__unchecked: (), other.rawValue)
     }
 
     /// Construct from an integer, throwing if negative.
     ///
     /// - Parameter position: The position value. Must be non-negative.
-    /// - Throws: `Error.negativePosition` if position is negative.
+    /// - Throws: `Ordinal.Position.Error.negativeSource` if position is negative.
     @inlinable
-    public init(_ position: Int) throws(Error) {
-        do {
-            let position = try Affine.Discrete.Position(position)
-            self.init(__unchecked: (), position)
-        } catch {
-            throw .negativePosition(position)
-        }
-    }
-
-    /// Unchecked construction.
-    ///
-    /// - Warning: No validation is performed. Use only when the value
-    ///   is known to be non-negative.
-    @inlinable
-    public init(__unchecked: Void, _ position: Int) {
-        self.init(__unchecked: (), Affine.Discrete.Position(__unchecked: (), position))
+    public init(_ position: Int) throws(Ordinal.Position.Error) {
+        self.init(__unchecked: (), try Ordinal.Position(position))
     }
 }
-
-// MARK: - Index.Error
-
-extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    /// Error type for Index construction.
-    public enum Error: Swift.Error, Hashable, Sendable {
-        case negativePosition(Int)
-    }
-}
-
-
 
 // MARK: - CustomStringConvertible
 
 extension Tagged: @retroactive CustomStringConvertible
-where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+where RawValue == Ordinal.Position, Tag: ~Copyable {
     public var description: String {
         "Index<\(Tag.self)>(\(rawValue.rawValue))"
     }

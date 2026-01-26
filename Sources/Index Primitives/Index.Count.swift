@@ -9,20 +9,22 @@
 //
 // ===----------------------------------------------------------------------===//
 
+public import Cardinal_Primitives
+
 // MARK: - Index.Count
 
-extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// A phantom-typed count for bounds checking.
     ///
-    /// `Index<Element>.Count` wraps `Affine.Discrete.Count` with a phantom type,
+    /// `Index<Element>.Count` wraps `Cardinal.Count` with a phantom type,
     /// preventing accidental comparison between indices and counts from
     /// different collection types.
     ///
     /// ## Type Safety
     ///
     /// ```swift
-    /// let graphCount = try Index<GraphTag>.Count(10)
-    /// let bitCount = try Index<Bit>.Count(100)
+    /// let graphCount = Index<GraphTag>.Count(10)
+    /// let bitCount = Index<Bit>.Count(100)
     ///
     /// let node: Index<GraphTag> = ...
     /// node < graphCount  // OK
@@ -32,30 +34,36 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// ## Usage
     ///
     /// ```swift
-    /// let count = try Index<Tag>.Count(storage.count)
+    /// let count = Index<Tag>.Count(storage.count)
     /// guard node < count else { return nil }
     /// ```
     public struct Count: Hashable, Comparable, Sendable {
-        /// The underlying untyped count.
-        public let count: Affine.Discrete.Count
+        /// The underlying cardinal count.
+        public let count: Cardinal.Count
 
-        /// The raw integer value.
+        /// The raw unsigned integer value.
         @inlinable
-        public var rawValue: Int { count.rawValue }
+        public var rawValue: UInt { count.rawValue }
 
-        /// Creates a typed count from an untyped count.
+        /// Creates a typed count from a cardinal count.
         @inlinable
-        public init(_ count: Affine.Discrete.Count) {
+        public init(_ count: Cardinal.Count) {
             self.count = count
         }
 
-        /// Creates a typed count from an integer.
+        /// Creates a typed count from an unsigned integer.
+        @inlinable
+        public init(_ rawValue: UInt) {
+            self.count = Cardinal.Count(rawValue)
+        }
+
+        /// Creates a typed count from a signed integer.
         ///
         /// - Parameter rawValue: The count value. Must be non-negative.
-        /// - Throws: `Affine.Discrete.Count.Error.negativeValue` if negative.
+        /// - Throws: `Cardinal.Count.Error.negativeSource` if negative.
         @inlinable
-        public init(_ rawValue: Int) throws(Affine.Discrete.Count.Error) {
-            self.count = try Affine.Discrete.Count(rawValue)
+        public init(_ rawValue: Int) throws(Cardinal.Count.Error) {
+            self.count = try Cardinal.Count(rawValue)
         }
 
         /// Creates a typed count without validation.
@@ -65,14 +73,25 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
         ///   is known to be non-negative.
         @inlinable
         public init(__unchecked: Void, _ rawValue: Int) {
-            self.count = Affine.Discrete.Count(__unchecked: rawValue)
+            self.count = Cardinal.Count(UInt(rawValue))
         }
 
         /// The zero count.
         @inlinable
         @_disfavoredOverload
         public static var zero: Self {
-            Self(Affine.Discrete.Count.zero)
+            Self(Cardinal.Count.zero)
+        }
+
+        /// The count of one.
+        @inlinable
+        public static var one: Self {
+            Self(Cardinal.Count.one)
+        }
+
+        @inlinable
+        public static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.count == rhs.count
         }
 
         @inlinable
@@ -86,7 +105,7 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
 // MARK: - CustomStringConvertible
 
 extension Tagged.Count: CustomStringConvertible
-where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+where RawValue == Ordinal.Position, Tag: ~Copyable {
     public var description: String {
         "Index<\(Tag.self)>.Count(\(rawValue))"
     }
@@ -94,19 +113,19 @@ where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
 
 // MARK: - Index from Count
 
-extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// Creates an index from a count.
     ///
     /// This is the canonical way to create an `endIndex` from a collection's count.
     /// Since `Count` is guaranteed non-negative, no validation is needed.
     ///
     /// ```swift
-    /// let count = try Index<Element>.Count(10)
+    /// let count = Index<Element>.Count(10)
     /// let endIndex = Index(count)  // Index at position 10
     /// ```
     @inlinable
     public init(_ count: Self.Count) {
-        self.init(__unchecked: (), count.rawValue)
+        self.init(__unchecked: (), Ordinal.Position(count.count))
     }
 
     /// Creates an index from a count in a different tag domain.
@@ -118,7 +137,7 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
     /// - Parameter count: A count from a different tag domain.
     @inlinable
     public init<Other: ~Copyable>(_ count: Tagged<Other, RawValue>.Count) {
-        self.init(__unchecked: (), count.rawValue)
+        self.init(__unchecked: (), Ordinal.Position(count.count))
     }
 }
 
@@ -129,23 +148,23 @@ extension Tagged where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
 /// This is the fundamental bounds check with phantom type safety.
 @inlinable
 public func < <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
-    lhs.position < rhs.count
+    lhs.position.rawValue < rhs.count.rawValue
 }
 
 /// Checks if an index is at or beyond the bounds.
 @inlinable
 public func >= <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
-    lhs.position >= rhs.count
+    lhs.position.rawValue >= rhs.count.rawValue
 }
 
 /// Checks if a count is greater than an index (index is in bounds).
 @inlinable
 public func > <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
-    lhs.count > rhs.position
+    lhs.count.rawValue > rhs.position.rawValue
 }
 
 /// Checks if a count is at or below an index (index is out of bounds).
 @inlinable
 public func <= <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
-    lhs.count <= rhs.position
+    lhs.count.rawValue <= rhs.position.rawValue
 }

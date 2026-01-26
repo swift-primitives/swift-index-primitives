@@ -9,7 +9,6 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Affine_Primitives
 public import Index_Primitives
 @_spi(Internal) public import Identity_Primitives
 
@@ -20,12 +19,9 @@ public import Index_Primitives
 ///
 /// - Warning: Traps on invalid values. Use only in tests.
 extension Tagged.Count: ExpressibleByIntegerLiteral
-where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    public init(integerLiteral value: Int) {
-        do {
-            self = try Self(value)
-        } catch {
-            preconditionFailure("Count literal \(value) is negative")
-        }
+where RawValue == Ordinal.Position, Tag: ~Copyable {
+    @_disfavoredOverload
+    public init(integerLiteral value: UInt) {
+        self.init(Cardinal.Count(value))
     }
 }

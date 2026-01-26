@@ -1,27 +1,30 @@
+// ===----------------------------------------------------------------------===//
 //
-//  File.swift
-//  swift-index-primitives
+// This source file is part of the swift-primitives open source project
 //
-//  Created by Coen ten Thije Boonkkamp on 24/01/2026.
+// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-primitives project authors
+// Licensed under Apache License v2.0
 //
+// See LICENSE for license information
+//
+// ===----------------------------------------------------------------------===//
 
-import Affine_Primitives
 @_spi(Internal) import Identity_Primitives
 
 // MARK: - Count from Offset Conversion
 
-extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+extension Tagged.Count where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// Creates a count from a non-negative offset.
     ///
     /// This is the canonical conversion from `Offset` to `Count`, validating that
     /// the offset is non-negative (since `Count` represents a magnitude).
     ///
     /// - Parameter offset: The offset (must be non-negative).
-    /// - Throws: `Affine.Discrete.Count.Error.negativeValue` if offset is negative.
+    /// - Throws: `Cardinal.Count.Error.negativeSource` if offset is negative.
     @inlinable
-    public init(_ offset: Tagged<Tag, RawValue>.Offset) throws(Affine.Discrete.Count.Error) {
+    public init(_ offset: Tagged<Tag, RawValue>.Offset) throws(Cardinal.Count.Error) {
         guard offset.rawValue >= 0 else {
-            throw .negativeValue(offset.rawValue)
+            throw .negativeSource(offset.rawValue)
         }
         self.init(__unchecked: (), offset.rawValue)
     }
@@ -40,65 +43,34 @@ extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyabl
 
 // MARK: - Arithmetic
 
-extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    /// Adds two counts.
+extension Tagged.Count where RawValue == Ordinal.Position, Tag: ~Copyable {
+    /// Adds two counts (trapping on overflow).
     @inlinable
     public static func + (lhs: Self, rhs: Self) -> Self {
         Self(lhs.count + rhs.count)
     }
-
-    /// Subtracts one count from another.
-    ///
-    /// - Returns: The difference, or `nil` if the result would be negative.
-    @inlinable
-    public static func - (lhs: Self, rhs: Self) -> Self? {
-        (lhs.count - rhs.count).map(Self.init)
-    }
 }
 
-extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
-    /// Multiplies a count by an integer.
-    ///
-    /// - Throws: `Affine.Discrete.Count.Error.negativeValue` if the result would be negative.
+extension Tagged.Count where RawValue == Ordinal.Position, Tag: ~Copyable {
+    /// Multiplies a count by an unsigned integer.
     @inlinable
-    public static func * (lhs: Self, rhs: Int) throws(Affine.Discrete.Count.Error) -> Self {
-        let result = lhs.rawValue * rhs
-        guard result >= 0 else {
-            throw .negativeValue(result)
-        }
-        return Self(__unchecked: (), result)
+    public static func * (lhs: Self, rhs: UInt) -> Self {
+        Self(Cardinal.Count(lhs.count.rawValue * rhs))
     }
 
-    /// Multiplies an integer by a count.
-    ///
-    /// - Throws: `Affine.Discrete.Count.Error.negativeValue` if the result would be negative.
+    /// Multiplies an unsigned integer by a count.
     @inlinable
-    public static func * (lhs: Int, rhs: Self) throws(Affine.Discrete.Count.Error) -> Self {
-        let result = lhs * rhs.rawValue
-        guard result >= 0 else {
-            throw .negativeValue(result)
-        }
-        return Self(__unchecked: (), result)
+    public static func * (lhs: UInt, rhs: Self) -> Self {
+        Self(Cardinal.Count(lhs * rhs.count.rawValue))
     }
 }
 
 // MARK: - Compound Assignment
 
-extension Tagged.Count where RawValue == Affine.Discrete.Position, Tag: ~Copyable {
+extension Tagged.Count where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// Increments the count by another count.
     @inlinable
     public static func += (lhs: inout Self, rhs: Self) {
         lhs = lhs + rhs
-    }
-
-    /// Decrements the count by another count.
-    ///
-    /// - Throws: `Affine.Discrete.Count.Error.negativeValue` if result would be negative.
-    @inlinable
-    public static func -= (lhs: inout Self, rhs: Self) throws(Affine.Discrete.Count.Error) {
-        guard let result = lhs - rhs else {
-            throw .negativeValue(lhs.rawValue - rhs.rawValue)
-        }
-        lhs = result
     }
 }
