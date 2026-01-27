@@ -1,0 +1,37 @@
+//
+//  File.swift
+//  swift-index-primitives
+//
+//  Created by Coen ten Thije Boonkkamp on 27/01/2026.
+//
+
+// MARK: - UnsafeMutableRawBufferPointer + Index
+
+extension UnsafeMutableRawBufferPointer {
+    /// Creates a mutable buffer pointer from a start address and typed count.
+    @inlinable
+    public init(
+        start: UnsafeMutableRawPointer?,
+        count: Index_Primitives.Index<UInt8>.Count
+    ) {
+        unsafe self.init(start: start, count: Int(count.rawValue))
+    }
+
+    /// Allocates uninitialized memory with typed count and alignment.
+    @inlinable
+    public static func allocate(
+        count: Index_Primitives.Index<UInt8>.Count,
+        alignment: Index_Primitives.Index<UInt8>.Count
+    ) -> Self {
+        Self.allocate(byteCount: Int(count.rawValue), alignment: Int(alignment.rawValue))
+    }
+
+    /// Accesses the byte at the given typed index.
+    @inlinable
+    public subscript(
+        _ index: Index_Primitives.Index<UInt8>
+    ) -> UInt8 {
+        get { unsafe self[Int(index.position.rawValue)] }
+        nonmutating set { unsafe self[Int(index.position.rawValue)] = newValue }
+    }
+}
