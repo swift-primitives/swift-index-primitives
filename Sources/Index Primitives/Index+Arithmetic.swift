@@ -67,7 +67,7 @@ public func - <Element: ~Copyable>(
     return Index(__unchecked: (), Ordinal.Position(UInt(result)))
 }
 
-// MARK: - Index - Index → Offset? (Point - Point → Vector)
+// MARK: - Index - Index → Offset (Point - Point → Vector)
 
 /// Returns the signed offset (displacement) between two indices.
 ///
@@ -80,8 +80,8 @@ public func - <Element: ~Copyable>(
 public func - <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>
-) -> Index<Element>.Offset? {
-    guard let vector = lhs.position - rhs.position else { return nil }
+) throws(Affine.Discrete.Vector.Error) -> Index<Element>.Offset  {
+    let vector = try (lhs.position - rhs.position)
     return Index<Element>.Offset(vector)
 }
 

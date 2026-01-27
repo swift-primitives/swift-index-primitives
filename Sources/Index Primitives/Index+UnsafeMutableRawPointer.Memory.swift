@@ -80,7 +80,7 @@ where Tag == UnsafeMutableRawPointer.Memory, Base == UnsafeMutableRawPointer {
     /// - Returns: A typed pointer to the bound memory.
     @inlinable
     @discardableResult
-    public func bind<T>(
+    public func bind<T: ~Copyable>(
         to type: T.Type,
         capacity: Index_Primitives.Index<T>.Count
     ) -> UnsafeMutablePointer<T> {
