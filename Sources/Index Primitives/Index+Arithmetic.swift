@@ -106,7 +106,7 @@ public func - <Element: ~Copyable>(
 public prefix func - <Element: ~Copyable>(
     offset: Index<Element>.Offset
 ) -> Index<Element>.Offset {
-    Index<Element>.Offset(-offset.rawValue)
+    offset.map { -$0 }
 }
 
 // MARK: - Compound Assignment
