@@ -87,6 +87,30 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     }
 }
 
+// MARK: - Count from Index
+
+extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+    /// Creates a count from an index position.
+    ///
+    /// Semantically, position N means "N elements precede this position",
+    /// so the count equals the position's numeric value.
+    ///
+    /// ```swift
+    /// let index = Index<Element>(5)
+    /// let count = Index<Element>.Count(index)  // Count of 5
+    /// ```
+    @inlinable
+    public init(_ index: Tagged<Tag, Ordinal.Position>) {
+        self.init(__unchecked: (), Cardinal.Count(index.rawValue.rawValue))
+    }
+
+    /// Creates a count from an index in a different tag domain.
+    @inlinable
+    public init<Other: ~Copyable>(_ index: Tagged<Other, Ordinal.Position>) {
+        self.init(__unchecked: (), Cardinal.Count(index.rawValue.rawValue))
+    }
+}
+
 // MARK: - Index < Count Comparison
 
 /// Checks if an index is within bounds for a collection of the given count.
@@ -113,4 +137,19 @@ public func > <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
 @inlinable
 public func <= <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
     lhs.rawValue.rawValue <= rhs.position.rawValue
+}
+
+/// Checks if an index is a valid endpoint (at or before count).
+///
+/// Unlike `<`, this allows `index == count` which represents the one-past-end
+/// position — valid for range endpoints and slice bounds, but not for subscript access.
+@inlinable
+public func <= <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
+    lhs.position.rawValue <= rhs.rawValue.rawValue
+}
+
+/// Checks if an index is strictly past the end.
+@inlinable
+public func > <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
+    lhs.position.rawValue > rhs.rawValue.rawValue
 }

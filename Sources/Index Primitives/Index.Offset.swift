@@ -82,3 +82,4 @@ extension Tagged where RawValue == Affine.Discrete.Vector, Tag: ~Copyable {
     @inlinable
     public static var one: Self { Self(__unchecked: (), Affine.Discrete.Vector(1)) }
 }
+
