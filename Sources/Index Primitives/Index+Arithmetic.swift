@@ -28,6 +28,7 @@
 ///
 /// - Throws: `Ordinal.Position.Error.negativeSource` if the result would be negative.
 @inlinable
+@_disfavoredOverload
 public func + <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Offset
@@ -43,6 +44,7 @@ public func + <Element: ~Copyable>(
 ///
 /// - Throws: `Ordinal.Position.Error.negativeSource` if the result would be negative.
 @inlinable
+@_disfavoredOverload
 public func + <Element: ~Copyable>(
     lhs: Index<Element>.Offset,
     rhs: Index<Element>
@@ -196,7 +198,6 @@ public func % <Element: ~Copyable>(
 ///   - rhs: The count (scalar) to advance by.
 /// - Returns: The advanced index.
 @inlinable
-@_disfavoredOverload
 public func + <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Count
