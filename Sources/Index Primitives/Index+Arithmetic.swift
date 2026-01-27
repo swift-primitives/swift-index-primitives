@@ -67,18 +67,22 @@ public func - <Element: ~Copyable>(
     return Index(__unchecked: (), Ordinal.Position(UInt(result)))
 }
 
-// MARK: - Index - Index → Offset (Point - Point → Vector)
+// MARK: - Index - Index → Offset? (Point - Point → Vector)
 
 /// Returns the signed offset (displacement) between two indices.
 ///
 /// The result is positive if `lhs > rhs`, negative if `lhs < rhs`.
 /// This is the fundamental affine operation: point difference yields a vector.
+///
+/// - Returns: The displacement vector, or `nil` if the difference exceeds
+///   `Int.max` or is less than `Int.min`.
 @inlinable
 public func - <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>
-) -> Index<Element>.Offset {
-    Index<Element>.Offset(lhs.position - rhs.position)
+) -> Index<Element>.Offset? {
+    guard let vector = lhs.position - rhs.position else { return nil }
+    return Index<Element>.Offset(vector)
 }
 
 // MARK: - Offset ± Offset → Offset (Vector ± Vector → Vector)
@@ -192,6 +196,7 @@ public func % <Element: ~Copyable>(
 ///   - rhs: The count (scalar) to advance by.
 /// - Returns: The advanced index.
 @inlinable
+@_disfavoredOverload
 public func + <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Count
