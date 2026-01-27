@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Index+UnsafeMutablePointer.swift
 //  swift-index-primitives
 //
 //  Created by Coen ten Thije Boonkkamp on 27/01/2026.
@@ -23,6 +23,15 @@ public func + <Pointee: ~Copyable>(
     rhs: UnsafeMutablePointer<Pointee>
 ) -> UnsafeMutablePointer<Pointee> {
     unsafe rhs + Int(lhs.position.rawValue)
+}
+
+/// Subtracts a typed index offset from a mutable pointer.
+@_transparent
+public func - <Pointee: ~Copyable>(
+    lhs: UnsafeMutablePointer<Pointee>,
+    rhs: Index<Pointee>
+) -> UnsafeMutablePointer<Pointee> {
+    unsafe lhs - Int(rhs.position.rawValue)
 }
 
 // MARK: - UnsafeMutablePointer Subscript
@@ -50,5 +59,49 @@ extension UnsafeMutablePointer where Pointee: ~Copyable {
         unsafeMutableAddress {
             unsafe self + index
         }
+    }
+}
+
+// MARK: - UnsafeMutablePointer Lifecycle Operations
+
+extension UnsafeMutablePointer {
+    /// Initializes the pointer's memory with the specified number of consecutive
+    /// copies of the given value.
+    ///
+    /// - Parameters:
+    ///   - repeatedValue: The instance to initialize this pointer's memory with.
+    ///   - count: The number of consecutive copies to initialize.
+    @inlinable
+    public func initialize(
+        repeating repeatedValue: Pointee,
+        count: Index_Primitives.Index<Pointee>.Count
+    ) {
+        unsafe self.initialize(repeating: repeatedValue, count: Int(count.rawValue))
+    }
+
+    /// Deinitializes the specified number of values starting at this pointer.
+    ///
+    /// - Parameter count: The number of consecutive instances to deinitialize.
+    /// - Returns: A raw pointer to the same address as this pointer.
+    @inlinable
+    @discardableResult
+    public func deinitialize(
+        count: Index_Primitives.Index<Pointee>.Count
+    ) -> UnsafeMutableRawPointer {
+        unsafe self.deinitialize(count: Int(count.rawValue))
+    }
+
+    /// Updates this pointer's initialized memory with the specified number
+    /// of consecutive copies of the given value.
+    ///
+    /// - Parameters:
+    ///   - repeatedValue: The value with which to update this pointer's memory.
+    ///   - count: The number of consecutive elements to update.
+    @inlinable
+    public func update(
+        repeating repeatedValue: Pointee,
+        count: Index_Primitives.Index<Pointee>.Count
+    ) {
+        unsafe self.update(repeating: repeatedValue, count: Int(count.rawValue))
     }
 }

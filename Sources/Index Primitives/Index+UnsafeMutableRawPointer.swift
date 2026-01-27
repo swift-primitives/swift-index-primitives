@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Index+UnsafeMutableRawPointer.swift
 //  swift-index-primitives
 //
 //  Created by Coen ten Thije Boonkkamp on 27/01/2026.
@@ -17,49 +17,6 @@ extension UnsafeMutableRawPointer {
         Self.allocate(byteCount: Int(count.rawValue), alignment: Int(alignment.rawValue))
     }
 
-    /// Initializes memory as the specified type with a repeated value.
-    @inlinable
-    @discardableResult
-    public func initializeMemory<T>(
-        as type: T.Type,
-        repeating value: T,
-        count: Index_Primitives.Index<T>.Count
-    ) -> UnsafeMutablePointer<T> {
-        unsafe self.initializeMemory(as: type, repeating: value, count: Int(count.rawValue))
-    }
-
-    /// Initializes memory as the specified type from a source buffer.
-    @inlinable
-    @discardableResult
-    public func initializeMemory<T>(
-        as type: T.Type,
-        from source: UnsafePointer<T>,
-        count: Index_Primitives.Index<T>.Count
-    ) -> UnsafeMutablePointer<T> {
-        unsafe self.initializeMemory(as: type, from: source, count: Int(count.rawValue))
-    }
-
-    /// Initializes memory by moving values from a source.
-    @inlinable
-    @discardableResult
-    public func moveInitializeMemory<T>(
-        as type: T.Type,
-        from source: UnsafeMutablePointer<T>,
-        count: Index_Primitives.Index<T>.Count
-    ) -> UnsafeMutablePointer<T> {
-        unsafe self.moveInitializeMemory(as: type, from: source, count: Int(count.rawValue))
-    }
-
-    /// Binds the memory to the specified type with a typed capacity.
-    @inlinable
-    @discardableResult
-    public func bindMemory<T>(
-        to type: T.Type,
-        capacity: Index_Primitives.Index<T>.Count
-    ) -> UnsafeMutablePointer<T> {
-        unsafe self.bindMemory(to: type, capacity: Int(capacity.rawValue))
-    }
-
     /// Returns a pointer offset by the specified typed byte offset.
     @inlinable
     public func advanced(
@@ -68,12 +25,17 @@ extension UnsafeMutableRawPointer {
         unsafe self.advanced(by: offset.rawValue)
     }
 
-    /// Copies bytes from a source with a typed byte count.
+    /// Returns a new instance of the given type, read from the specified offset.
+    ///
+    /// - Parameters:
+    ///   - offset: The offset from this pointer at which to read a value.
+    ///   - type: The type of the value to read.
+    /// - Returns: A new instance of the given type.
     @inlinable
-    public func copyMemory(
-        from source: UnsafeRawPointer,
-        count: Index_Primitives.Index<UInt8>.Count
-    ) {
-        unsafe self.copyMemory(from: source, byteCount: Int(count.rawValue))
+    public func load<T>(
+        fromByteOffset offset: Index_Primitives.Index<UInt8>.Offset,
+        as type: T.Type
+    ) -> T {
+        unsafe self.load(fromByteOffset: offset.rawValue, as: type)
     }
 }

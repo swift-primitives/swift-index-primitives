@@ -19,4 +19,18 @@ extension UnsafeRawPointer {
     ) -> Self {
         unsafe self.advanced(by: offset.rawValue)
     }
+
+    /// Returns a new instance of the given type, read from the specified offset.
+    ///
+    /// - Parameters:
+    ///   - offset: The offset from this pointer at which to read a value.
+    ///   - type: The type of the value to read.
+    /// - Returns: A new instance of the given type.
+    @inlinable
+    public func load<T>(
+        fromByteOffset offset: Index_Primitives.Index<UInt8>.Offset,
+        as type: T.Type
+    ) -> T {
+        unsafe self.load(fromByteOffset: offset.rawValue, as: type)
+    }
 }

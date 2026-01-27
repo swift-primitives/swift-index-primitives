@@ -31,6 +31,15 @@ public func + <Pointee: ~Copyable>(
     unsafe rhs + Int(lhs.position.rawValue)
 }
 
+/// Subtracts a typed index offset from a pointer.
+@_transparent
+public func - <Pointee: ~Copyable>(
+    lhs: UnsafePointer<Pointee>,
+    rhs: Index<Pointee>
+) -> UnsafePointer<Pointee> {
+    unsafe lhs - Int(rhs.position.rawValue)
+}
+
 // MARK: - UnsafePointer Subscript
 
 extension UnsafePointer where Pointee: ~Copyable {
