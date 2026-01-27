@@ -92,13 +92,13 @@ extension IndexOffsetTests.Unit {
 extension IndexOffsetTests.EdgeCase {
     @Test("maximum Int offset")
     func maxIntOffset() {
-        let offset: Index<IntTag>.Offset = Index<IntTag>.Offset(Int.max)
-        #expect(offset.rawValue == Int.max)
+        let offset = Index<IntTag>.Offset(Int.max)
+        #expect(offset.vector.rawValue == Int.max)
     }
 
     @Test("minimum Int offset")
     func minIntOffset() {
-        let offset: Index<IntTag>.Offset = Index<IntTag>.Offset(Int.min)
-        #expect(offset.rawValue == Int.min)
+        let offset = Index<IntTag>.Offset(Int.min)
+        #expect(offset.vector.rawValue == Int.min)
     }
 }

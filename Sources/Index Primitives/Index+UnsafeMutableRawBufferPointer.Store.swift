@@ -47,6 +47,6 @@ where Tag == UnsafeMutableRawBufferPointer.Store, Base == UnsafeMutableRawBuffer
         at offset: Index_Primitives.Index<UInt8>.Offset,
         as type: T.Type
     ) {
-        unsafe base.storeBytes(of: value, toByteOffset: offset.rawValue, as: type)
+        unsafe base.storeBytes(of: value, toByteOffset: offset.vector.rawValue, as: type)
     }
 }

@@ -14,7 +14,7 @@ extension UnsafeMutableRawBufferPointer {
         start: UnsafeMutableRawPointer?,
         count: Index_Primitives.Index<UInt8>.Count
     ) {
-        unsafe self.init(start: start, count: Int(count.rawValue))
+        unsafe self.init(start: start, count: Int(count.count.rawValue))
     }
 
     /// Allocates uninitialized memory with typed count and alignment.
@@ -23,7 +23,7 @@ extension UnsafeMutableRawBufferPointer {
         count: Index_Primitives.Index<UInt8>.Count,
         alignment: Index_Primitives.Index<UInt8>.Count
     ) -> Self {
-        Self.allocate(byteCount: Int(count.rawValue), alignment: Int(alignment.rawValue))
+        Self.allocate(byteCount: Int(count.count.rawValue), alignment: Int(alignment.count.rawValue))
     }
 
     /// Accesses the byte at the given typed index.
@@ -46,6 +46,6 @@ extension UnsafeMutableRawBufferPointer {
         fromByteOffset offset: Index_Primitives.Index<UInt8>.Offset,
         as type: T.Type
     ) -> T {
-        unsafe self.load(fromByteOffset: offset.rawValue, as: type)
+        unsafe self.load(fromByteOffset: offset.vector.rawValue, as: type)
     }
 }

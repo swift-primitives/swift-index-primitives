@@ -32,7 +32,7 @@ public func + <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Offset
 ) throws(Ordinal.Position.Error) -> Index<Element> {
-    let result = Int(bitPattern: lhs.position.rawValue) + rhs.rawValue
+    let result = Int(bitPattern: lhs.position.rawValue) + rhs.rawValue.rawValue
     guard result >= .zero else {
         throw .negativeSource(result)
     }
@@ -60,7 +60,7 @@ public func - <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Offset
 ) throws(Ordinal.Position.Error) -> Index<Element> {
-    let result = Int(bitPattern: lhs.position.rawValue) - rhs.rawValue
+    let result = Int(bitPattern: lhs.position.rawValue) - rhs.rawValue.rawValue
     guard result >= 0 else {
         throw .negativeSource(result)
     }
@@ -89,7 +89,7 @@ public func + <Element: ~Copyable>(
     lhs: Index<Element>.Offset,
     rhs: Index<Element>.Offset
 ) -> Index<Element>.Offset {
-    Index<Element>.Offset(lhs.vector + rhs.vector)
+    Index<Element>.Offset(lhs.rawValue + rhs.rawValue)
 }
 
 /// Subtracts two offsets.
@@ -98,7 +98,7 @@ public func - <Element: ~Copyable>(
     lhs: Index<Element>.Offset,
     rhs: Index<Element>.Offset
 ) -> Index<Element>.Offset {
-    Index<Element>.Offset(lhs.vector - rhs.vector)
+    Index<Element>.Offset(lhs.rawValue - rhs.rawValue)
 }
 
 /// Negates an offset.
@@ -106,7 +106,7 @@ public func - <Element: ~Copyable>(
 public prefix func - <Element: ~Copyable>(
     offset: Index<Element>.Offset
 ) -> Index<Element>.Offset {
-    Index<Element>.Offset(-offset.vector)
+    Index<Element>.Offset(-offset.rawValue)
 }
 
 // MARK: - Compound Assignment
@@ -174,5 +174,46 @@ public func % <Element: ~Copyable>(
     lhs: Index<Element>,
     rhs: Index<Element>.Count
 ) -> Index<Element> {
-    Index<Element>(__unchecked: (), Ordinal.Position(lhs.position.rawValue % rhs.rawValue))
+    Index<Element>(__unchecked: (), Ordinal.Position(lhs.position.rawValue % rhs.rawValue.rawValue))
+}
+
+// MARK: - Index + Count → Index (Point + Scalar → Point)
+
+/// Advances an index by a count.
+///
+/// Unlike `Index + Offset`, this operation is total because `Count` is always
+/// non-negative. The only failure mode is UInt overflow (which traps).
+///
+/// This represents point advancement by a positive scalar, distinct from
+/// point translation by a signed vector (`Index + Offset`).
+///
+/// - Parameters:
+///   - lhs: The index (point) to advance.
+///   - rhs: The count (scalar) to advance by.
+/// - Returns: The advanced index.
+@inlinable
+public func + <Element: ~Copyable>(
+    lhs: Index<Element>,
+    rhs: Index<Element>.Count
+) -> Index<Element> {
+    // Total: lhs.position >= 0, rhs.count >= 0, so result >= 0
+    Index<Element>(__unchecked: (), Ordinal.Position(lhs.position.rawValue + rhs.rawValue.rawValue))
+}
+
+/// Advances an index by a count (commutative).
+@inlinable
+public func + <Element: ~Copyable>(
+    lhs: Index<Element>.Count,
+    rhs: Index<Element>
+) -> Index<Element> {
+    rhs + lhs
+}
+
+/// Advances an index by a count in place.
+@inlinable
+public func += <Element: ~Copyable>(
+    lhs: inout Index<Element>,
+    rhs: Index<Element>.Count
+) {
+    lhs = lhs + rhs
 }

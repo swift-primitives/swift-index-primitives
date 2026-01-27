@@ -35,6 +35,6 @@ where Tag == UnsafeMutableRawPointer.Memory.Move, Base == UnsafeMutableRawPointe
         from source: UnsafeMutablePointer<T>,
         count: Index_Primitives.Index<T>.Count
     ) -> UnsafeMutablePointer<T> {
-        unsafe base.moveInitializeMemory(as: type, from: source, count: Int(count.rawValue))
+        unsafe base.moveInitializeMemory(as: type, from: source, count: Int(count.count.rawValue))
     }
 }

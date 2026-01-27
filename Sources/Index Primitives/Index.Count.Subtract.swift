@@ -14,7 +14,7 @@ public import Property_Primitives
 
 // MARK: - Subtract Tag and Accessor
 
-extension Tagged.Count where RawValue == Ordinal.Position, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
     /// Tag for subtraction operations.
     public enum Subtract {}
 
@@ -36,23 +36,23 @@ extension Property {
     /// Saturating subtraction: returns `max(0, self - other)`.
     @inlinable
     public func saturating<T: ~Copyable>(_ other: Base) -> Base
-    where Tag == Tagged<T, Ordinal.Position>.Count.Subtract,
-          Base == Tagged<T, Ordinal.Position>.Count {
-        Base(base.count.subtract.saturating(other.count))
+    where Tag == Tagged<T, Cardinal.Count>.Subtract,
+          Base == Tagged<T, Cardinal.Count> {
+        Base(__unchecked: (), base.rawValue.subtract.saturating(other.rawValue))
     }
 
     /// Exact subtraction: returns `self - other` or throws if negative.
     @inlinable
     public func exact<T: ~Copyable>(_ other: Base) throws(Cardinal.Count.Error) -> Base
-    where Tag == Tagged<T, Ordinal.Position>.Count.Subtract,
-          Base == Tagged<T, Ordinal.Position>.Count {
-        Base(try base.count.subtract.exact(other.count))
+    where Tag == Tagged<T, Cardinal.Count>.Subtract,
+          Base == Tagged<T, Cardinal.Count> {
+        Base(__unchecked: (), try base.rawValue.subtract.exact(other.rawValue))
     }
 
     @inlinable
     public func callAsFunction<T: ~Copyable>(_ other: Base) throws(Cardinal.Count.Error) -> Base
-    where Tag == Tagged<T, Ordinal.Position>.Count.Subtract,
-          Base == Tagged<T, Ordinal.Position>.Count {
+    where Tag == Tagged<T, Cardinal.Count>.Subtract,
+          Base == Tagged<T, Cardinal.Count> {
         try self.exact(other)
     }
 }

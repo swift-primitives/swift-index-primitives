@@ -45,6 +45,7 @@ let package = Package(
             name: "Index Primitives Test Support",
             dependencies: [
                 "Index Primitives",
+                .product(name: "Identity Primitives Test Support", package: "swift-identity-primitives"),
                 .product(name: "Ordinal Primitives Test Support", package: "swift-ordinal-primitives"),
                 .product(name: "Cardinal Primitives Test Support", package: "swift-cardinal-primitives"),
                 .product(name: "Affine Primitives Test Support", package: "swift-affine-primitives"),

@@ -9,16 +9,10 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Index_Primitives
-@_spi(Internal) public import Identity_Primitives
-
-/// Test support: Adds `ExpressibleByIntegerLiteral` conformance to `Index<Tag>.Offset`.
-///
-/// This conformance is available only for test targets. Production code should use
-/// `init(_:)` to construct offsets.
-extension Tagged.Offset: ExpressibleByIntegerLiteral
-where RawValue == Ordinal.Position, Tag: ~Copyable {
-    public init(integerLiteral value: Int) {
-        self.init(value)
-    }
-}
+// Index.Offset literal support is provided by Identity_Primitives_Test_Support.
+// Since Affine.Discrete.Vector: ExpressibleByIntegerLiteral, the general Tagged
+// conformance in Identity_Primitives_Test_Support applies to Tagged<Tag, Affine.Discrete.Vector>.
+//
+// Usage in tests:
+//   let offset: Index<Tag>.Offset = 5
+//   let negative: Index<Tag>.Offset = -3

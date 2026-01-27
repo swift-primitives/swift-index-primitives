@@ -11,7 +11,7 @@
 
 public import Cardinal_Primitives
 
-// MARK: - Index.Count
+// MARK: - Index.Count (Tagged Typealias)
 
 extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// A phantom-typed count for bounds checking.
@@ -31,85 +31,31 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// // node < bitCount  // Compile error - different phantom types
     /// ```
     ///
+    /// ## Tagged Functor
+    ///
+    /// As a Tagged typealias, `Index.Count` gains:
+    /// - `retag(_:)` for zero-cost cross-domain conversion
+    /// - `map(_:)` for value transformation
+    /// - Automatic `Equatable`, `Hashable`, `Comparable`, `Sendable` conformances
+    ///
+    /// ```swift
+    /// // Cross-domain conversion via retag
+    /// let rangeCount: Index<Range>.Count = ...
+    /// let elementCount: Index<Element>.Count = rangeCount.retag(Element.self)
+    ///
+    /// // Value transformation via map
+    /// let doubled = count.map { Cardinal.Count($0.rawValue * 2) }
+    /// ```
+    ///
     /// ## Usage
     ///
     /// ```swift
     /// let count = Index<Tag>.Count(storage.count)
     /// guard node < count else { return nil }
     /// ```
-    public struct Count: Hashable, Comparable, Sendable {
-        /// The underlying cardinal count.
-        public let count: Cardinal.Count
-
-        /// The raw unsigned integer value.
-        @inlinable
-        public var rawValue: UInt { count.rawValue }
-
-        /// Creates a typed count from a cardinal count.
-        @inlinable
-        public init(_ count: Cardinal.Count) {
-            self.count = count
-        }
-
-        /// Creates a typed count from an unsigned integer.
-        @inlinable
-        public init(_ rawValue: UInt) {
-            self.count = Cardinal.Count(rawValue)
-        }
-
-        /// Creates a typed count from a signed integer.
-        ///
-        /// - Parameter rawValue: The count value. Must be non-negative.
-        /// - Throws: `Cardinal.Count.Error.negativeSource` if negative.
-        @inlinable
-        public init(_ rawValue: Int) throws(Cardinal.Count.Error) {
-            self.count = try Cardinal.Count(rawValue)
-        }
-
-        /// Creates a typed count without validation.
-        ///
-        /// - Parameter rawValue: Must be non-negative.
-        /// - Warning: No validation is performed. Use only when the value
-        ///   is known to be non-negative.
-        @inlinable
-        public init(__unchecked: Void, _ rawValue: Int) {
-            self.count = Cardinal.Count(UInt(rawValue))
-        }
-
-        /// The zero count.
-        @inlinable
-        @_disfavoredOverload
-        public static var zero: Self {
-            Self(Cardinal.Count.zero)
-        }
-
-        /// The count of one.
-        @inlinable
-        public static var one: Self {
-            Self(Cardinal.Count.one)
-        }
-
-        @inlinable
-        public static func == (lhs: Self, rhs: Self) -> Bool {
-            lhs.count == rhs.count
-        }
-
-        @inlinable
-        public static func < (lhs: Self, rhs: Self) -> Bool {
-            lhs.count < rhs.count
-        }
-    }
+    public typealias Count = Tagged<Tag, Cardinal.Count>
 }
 
-
-// MARK: - CustomStringConvertible
-
-extension Tagged.Count: CustomStringConvertible
-where RawValue == Ordinal.Position, Tag: ~Copyable {
-    public var description: String {
-        "Index<\(Tag.self)>.Count(\(rawValue))"
-    }
-}
 
 // MARK: - Index from Count
 
@@ -125,7 +71,7 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// ```
     @inlinable
     public init(_ count: Self.Count) {
-        self.init(__unchecked: (), Ordinal.Position(count.count))
+        self.init(__unchecked: (), Ordinal.Position(count.rawValue))
     }
 
     /// Creates an index from a count in a different tag domain.
@@ -136,8 +82,8 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     ///
     /// - Parameter count: A count from a different tag domain.
     @inlinable
-    public init<Other: ~Copyable>(_ count: Tagged<Other, RawValue>.Count) {
-        self.init(__unchecked: (), Ordinal.Position(count.count))
+    public init<Other: ~Copyable>(_ count: Tagged<Other, Cardinal.Count>) {
+        self.init(__unchecked: (), Ordinal.Position(count.rawValue))
     }
 }
 
@@ -148,23 +94,23 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
 /// This is the fundamental bounds check with phantom type safety.
 @inlinable
 public func < <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
-    lhs.position.rawValue < rhs.count.rawValue
+    lhs.position.rawValue < rhs.rawValue.rawValue
 }
 
 /// Checks if an index is at or beyond the bounds.
 @inlinable
 public func >= <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
-    lhs.position.rawValue >= rhs.count.rawValue
+    lhs.position.rawValue >= rhs.rawValue.rawValue
 }
 
 /// Checks if a count is greater than an index (index is in bounds).
 @inlinable
 public func > <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
-    lhs.count.rawValue > rhs.position.rawValue
+    lhs.rawValue.rawValue > rhs.position.rawValue
 }
 
 /// Checks if a count is at or below an index (index is out of bounds).
 @inlinable
 public func <= <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
-    lhs.count.rawValue <= rhs.position.rawValue
+    lhs.rawValue.rawValue <= rhs.position.rawValue
 }

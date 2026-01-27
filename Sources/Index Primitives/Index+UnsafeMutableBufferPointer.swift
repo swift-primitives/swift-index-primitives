@@ -22,7 +22,7 @@ extension UnsafeMutableBufferPointer where Element: ~Copyable {
         start: UnsafeMutablePointer<Element>?,
         count: Index_Primitives.Index<Element>.Count
     ) {
-        unsafe self.init(start: start, count: Int(count.rawValue))
+        unsafe self.init(start: start, count: Int(count.count.rawValue))
     }
 }
 

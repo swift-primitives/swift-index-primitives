@@ -76,7 +76,7 @@ extension UnsafeMutablePointer {
         repeating repeatedValue: Pointee,
         count: Index_Primitives.Index<Pointee>.Count
     ) {
-        unsafe self.initialize(repeating: repeatedValue, count: Int(count.rawValue))
+        unsafe self.initialize(repeating: repeatedValue, count: Int(count.count.rawValue))
     }
 
     /// Deinitializes the specified number of values starting at this pointer.
@@ -88,7 +88,7 @@ extension UnsafeMutablePointer {
     public func deinitialize(
         count: Index_Primitives.Index<Pointee>.Count
     ) -> UnsafeMutableRawPointer {
-        unsafe self.deinitialize(count: Int(count.rawValue))
+        unsafe self.deinitialize(count: Int(count.count.rawValue))
     }
 
     /// Updates this pointer's initialized memory with the specified number
@@ -102,6 +102,6 @@ extension UnsafeMutablePointer {
         repeating repeatedValue: Pointee,
         count: Index_Primitives.Index<Pointee>.Count
     ) {
-        unsafe self.update(repeating: repeatedValue, count: Int(count.rawValue))
+        unsafe self.update(repeating: repeatedValue, count: Int(count.count.rawValue))
     }
 }

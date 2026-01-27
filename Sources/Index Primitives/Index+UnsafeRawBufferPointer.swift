@@ -14,7 +14,7 @@ extension UnsafeRawBufferPointer {
         start: UnsafeRawPointer?,
         count: Index_Primitives.Index<UInt8>.Count
     ) {
-        unsafe self.init(start: start, count: Int(count.rawValue))
+        unsafe self.init(start: start, count: Int(count.count.rawValue))
     }
 
     /// Accesses the byte at the given typed index.
@@ -36,6 +36,6 @@ extension UnsafeRawBufferPointer {
         fromByteOffset offset: Index_Primitives.Index<UInt8>.Offset,
         as type: T.Type
     ) -> T {
-        unsafe self.load(fromByteOffset: offset.rawValue, as: type)
+        unsafe self.load(fromByteOffset: offset.vector.rawValue, as: type)
     }
 }

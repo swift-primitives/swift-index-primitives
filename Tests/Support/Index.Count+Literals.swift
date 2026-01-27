@@ -9,19 +9,9 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Index_Primitives
-@_spi(Internal) public import Identity_Primitives
-
-/// Test support: Adds `ExpressibleByIntegerLiteral` conformance to `Index<Tag>.Count`.
-///
-/// This conformance is available only for test targets. Production code should use
-/// the throwing initializer `init(_:)` to construct counts.
-///
-/// - Warning: Traps on invalid values. Use only in tests.
-extension Tagged.Count: ExpressibleByIntegerLiteral
-where RawValue == Ordinal.Position, Tag: ~Copyable {
-    @_disfavoredOverload
-    public init(integerLiteral value: UInt) {
-        self.init(Cardinal.Count(value))
-    }
-}
+// Index.Count literal support is provided by Identity_Primitives_Test_Support.
+// Since Cardinal.Count: ExpressibleByIntegerLiteral, the general Tagged conformance
+// in Identity_Primitives_Test_Support applies to Tagged<Tag, Cardinal.Count>.
+//
+// Usage in tests:
+//   let count: Index<Tag>.Count = 10

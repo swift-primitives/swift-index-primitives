@@ -17,7 +17,7 @@ extension UnsafeRawPointer {
     public func advanced(
         by offset: Index_Primitives.Index<UInt8>.Offset
     ) -> Self {
-        unsafe self.advanced(by: offset.rawValue)
+        unsafe self.advanced(by: offset.vector.rawValue)
     }
 
     /// Returns a new instance of the given type, read from the specified offset.
@@ -31,6 +31,6 @@ extension UnsafeRawPointer {
         fromByteOffset offset: Index_Primitives.Index<UInt8>.Offset,
         as type: T.Type
     ) -> T {
-        unsafe self.load(fromByteOffset: offset.rawValue, as: type)
+        unsafe self.load(fromByteOffset: offset.vector.rawValue, as: type)
     }
 }

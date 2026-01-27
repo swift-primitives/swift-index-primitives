@@ -47,7 +47,7 @@ extension Property_Primitives.Property {
         from source: UnsafeMutablePointer<Pointee>,
         count: Index_Primitives.Index<Pointee>.Count
     ) where Tag == UnsafeMutablePointer<Pointee>.Move, Base == UnsafeMutablePointer<Pointee> {
-        unsafe base.moveInitialize(from: source, count: Int(count.rawValue))
+        unsafe base.moveInitialize(from: source, count: Int(count.count.rawValue))
     }
 
     /// Moves instances from source memory to replace values at this pointer.
@@ -63,6 +63,6 @@ extension Property_Primitives.Property {
         from source: UnsafeMutablePointer<Pointee>,
         count: Index_Primitives.Index<Pointee>.Count
     ) where Tag == UnsafeMutablePointer<Pointee>.Move, Base == UnsafeMutablePointer<Pointee> {
-        unsafe base.moveUpdate(from: source, count: Int(count.rawValue))
+        unsafe base.moveUpdate(from: source, count: Int(count.count.rawValue))
     }
 }
