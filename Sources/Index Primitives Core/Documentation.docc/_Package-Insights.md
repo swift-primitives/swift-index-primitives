@@ -172,6 +172,37 @@ Swift infers that `.bitsPerByte` must be `Ratio<UInt8, Bit>` because the left op
 
 ---
 
+## Zero Arithmetic as an Architectural Achievement
+
+**Date**: 2026-01-28
+
+**Context**: Completing the refactor with Index Primitives Core containing no arithmetic operators.
+
+Before the refactoring, Index Primitives Core contained:
+- `Index+Arithmetic.swift` (226 lines)
+- `Index.Count+Arithmetic.swift` (174 lines)
+- `Index.Count+Ratio.swift` (64 lines)
+- `Index.Offset+Ratio.swift` (62 lines)
+
+Over 500 lines of operator definitions, many duplicating logic that existed at lower levels.
+
+After the refactor:
+- `Index+Arithmetic.swift` — deleted
+- `Index.Count+Ratio.swift` — deleted
+- `Index.Offset+Ratio.swift` — deleted
+- `Index.Count+Arithmetic.swift` — reduced to 43 lines (conversion initializers only)
+
+The arithmetic operators now live in:
+- `Tagged+Cardinal.swift` in Cardinal Primitives
+- `Tagged+Ordinal.swift` in Ordinal Primitives
+- `Tagged+Affine.swift` in Affine Primitives
+
+"Index Primitives has no arithmetic" is now a true statement. The package provides type structure; lower-level packages provide operations. This separation isn't about file organization—it's about where mathematical concepts live in the system. Arithmetic is mathematics; Index is structure. They belong in different places.
+
+**Applies to**: Package architecture, arithmetic-free design, type structure vs operations separation.
+
+---
+
 ## Topics
 
 ### Related Documents
