@@ -9,7 +9,10 @@
 
 extension UnsafeMutableRawBufferPointer {
     /// Creates a mutable buffer pointer from a start address and typed count.
+    ///
+    /// Disfavored so stdlib's `init(start:count:)` is preferred when `.zero` is used.
     @inlinable
+    @_disfavoredOverload
     public init(
         start: UnsafeMutableRawPointer?,
         count: Index_Primitives_Core.Index<UInt8>.Count
@@ -21,7 +24,10 @@ extension UnsafeMutableRawBufferPointer {
     }
 
     /// Allocates uninitialized memory with typed count and alignment.
+    ///
+    /// Disfavored so stdlib's `allocate(byteCount:alignment:)` is preferred.
     @inlinable
+    @_disfavoredOverload
     public static func allocate(
         count: Index_Primitives_Core.Index<UInt8>.Count,
         alignment: Index_Primitives_Core.Index<UInt8>.Count

@@ -9,7 +9,10 @@
 
 extension UnsafeRawBufferPointer {
     /// Creates a buffer pointer from a start address and typed count.
+    ///
+    /// Disfavored so stdlib's `init(start:count:)` is preferred when `.zero` is used.
     @inlinable
+    @_disfavoredOverload
     public init(
         start: UnsafeRawPointer?,
         count: Index_Primitives_Core.Index<UInt8>.Count
