@@ -38,15 +38,6 @@ extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
     /// - `map(_:)` for value transformation
     /// - Automatic `Equatable`, `Hashable`, `Comparable`, `Sendable` conformances
     ///
-    /// ```swift
-    /// // Cross-domain conversion via retag
-    /// let rangeCount: Index<Range>.Count = ...
-    /// let elementCount: Index<Element>.Count = rangeCount.retag(Element.self)
-    ///
-    /// // Value transformation via map
-    /// let doubled = count.map { Cardinal($0.rawValue * 2) }
-    /// ```
-    ///
     /// ## Usage
     ///
     /// ```swift
@@ -54,76 +45,4 @@ extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
     /// guard node < count else { return nil }
     /// ```
     public typealias Count = Tagged<Tag, Cardinal>
-}
-
-
-// MARK: - Index from Count
-
-extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
-    /// Creates an index from a count.
-    ///
-    /// This is the canonical way to create an `endIndex` from a collection's count.
-    /// Since `Count` is guaranteed non-negative, no validation is needed.
-    ///
-    /// ```swift
-    /// let count = Index<Element>.Count(10)
-    /// let endIndex = Index(count)  // Index at position 10
-    /// ```
-    @inlinable
-    public init(_ count: Self.Count) {
-        self.init(__unchecked: (), Ordinal(count.rawValue))
-    }
-
-    /// Creates an index from a count in a different tag domain.
-    ///
-    /// This is total - Count is non-negative, so the resulting Index is valid.
-    /// Use this for cross-domain conversions where the count from one domain
-    /// becomes an index position in another domain.
-    ///
-    /// - Parameter count: A count from a different tag domain.
-    @inlinable
-    public init<Other: ~Copyable>(_ count: Tagged<Other, Cardinal>) {
-        self.init(__unchecked: (), Ordinal(count.rawValue))
-    }
-}
-
-// MARK: - Count from Index
-
-extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
-    /// Creates a count from an index position.
-    ///
-    /// Semantically, position N means "N elements precede this position",
-    /// so the count equals the position's numeric value.
-    ///
-    /// ```swift
-    /// let index = Index<Element>(5)
-    /// let count = Index<Element>.Count(index)  // Count of 5
-    /// ```
-    @inlinable
-    public init(_ index: Tagged<Tag, Ordinal>) {
-        self.init(__unchecked: (), Cardinal(index.rawValue))
-    }
-
-    /// Creates a count from an index in a different tag domain.
-    @inlinable
-    public init<Other: ~Copyable>(_ index: Tagged<Other, Ordinal>) {
-        self.init(__unchecked: (), Cardinal(index.rawValue))
-    }
-}
-
-extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
-    // MARK: - Constants
-
-    /// The zero count.
-    @inlinable
-    @_disfavoredOverload
-    public static var zero: Self {
-        Self(__unchecked: (), Cardinal.zero)
-    }
-
-    /// The count of one.
-    @inlinable
-    public static var one: Self {
-        Self(__unchecked: (), Cardinal.one)
-    }
 }

@@ -37,40 +37,6 @@ public import Ordinal_Primitives
 /// ```
 public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal>
 
-// MARK: - Index Construction
-
-extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
-    /// The underlying position.
-    @inlinable
-    public var position: Ordinal { rawValue }
-
-    /// The zero index.
-    public static var zero: Self { .init(__unchecked: (), .zero) }
-
-    // MARK: - Cross-Domain Retagging
-
-    /// Creates an index by retagging from another tag domain.
-    ///
-    /// This is a total operation - retagging preserves the position value
-    /// and cannot fail. Use this to convert indices between different
-    /// phantom-typed domains that share the same underlying position space.
-    ///
-    /// - Parameter other: An index from a different tag domain.
-    @inlinable
-    public init<Other: ~Copyable>(_ other: Tagged<Other, RawValue>) {
-        self.init(__unchecked: (), other.rawValue)
-    }
-
-    /// Construct from an integer, throwing if negative.
-    ///
-    /// - Parameter position: The position value. Must be non-negative.
-    /// - Throws: `Ordinal.Error.negativeSource` if position is negative.
-    @inlinable
-    public init(_ position: Int) throws(Ordinal.Error) {
-        self.init(__unchecked: (), try Ordinal(position))
-    }
-}
-
 // MARK: - CustomStringConvertible
 
 extension Tagged: @retroactive CustomStringConvertible
