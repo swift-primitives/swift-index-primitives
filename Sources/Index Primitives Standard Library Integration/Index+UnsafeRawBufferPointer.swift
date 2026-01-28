@@ -12,7 +12,7 @@ extension UnsafeRawBufferPointer {
     @inlinable
     public init(
         start: UnsafeRawPointer?,
-        count: Index_Primitives.Index<UInt8>.Count
+        count: Index_Primitives_Core.Index<UInt8>.Count
     ) {
         unsafe self.init(start: start, count: Int(count.count.rawValue))
     }
@@ -20,7 +20,7 @@ extension UnsafeRawBufferPointer {
     /// Accesses the byte at the given typed index.
     @inlinable
     public subscript(
-        _ index: Index_Primitives.Index<UInt8>
+        _ index: Index_Primitives_Core.Index<UInt8>
     ) -> UInt8 {
         unsafe self[Int(index.position.rawValue)]
     }
@@ -33,7 +33,7 @@ extension UnsafeRawBufferPointer {
     /// - Returns: A new instance of the given type.
     @inlinable
     public func load<T>(
-        fromByteOffset offset: Index_Primitives.Index<UInt8>.Offset,
+        fromByteOffset offset: Index_Primitives_Core.Index<UInt8>.Offset,
         as type: T.Type
     ) -> T {
         unsafe self.load(fromByteOffset: offset.vector.rawValue, as: type)

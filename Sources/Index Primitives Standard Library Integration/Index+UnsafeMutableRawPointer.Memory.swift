@@ -50,7 +50,7 @@ where Tag == UnsafeMutableRawPointer.Memory, Base == UnsafeMutableRawPointer {
     public func initialize<T>(
         as type: T.Type,
         repeating value: T,
-        count: Index_Primitives.Index<T>.Count
+        count: Index_Primitives_Core.Index<T>.Count
     ) -> UnsafeMutablePointer<T> {
         unsafe base.initializeMemory(as: type, repeating: value, count: Int(count.count.rawValue))
     }
@@ -67,7 +67,7 @@ where Tag == UnsafeMutableRawPointer.Memory, Base == UnsafeMutableRawPointer {
     public func initialize<T>(
         as type: T.Type,
         from source: UnsafePointer<T>,
-        count: Index_Primitives.Index<T>.Count
+        count: Index_Primitives_Core.Index<T>.Count
     ) -> UnsafeMutablePointer<T> {
         unsafe base.initializeMemory(as: type, from: source, count: Int(count.count.rawValue))
     }
@@ -82,7 +82,7 @@ where Tag == UnsafeMutableRawPointer.Memory, Base == UnsafeMutableRawPointer {
     @discardableResult
     public func bind<T: ~Copyable>(
         to type: T.Type,
-        capacity: Index_Primitives.Index<T>.Count
+        capacity: Index_Primitives_Core.Index<T>.Count
     ) -> UnsafeMutablePointer<T> {
         unsafe base.bindMemory(to: type, capacity: Int(capacity.count.rawValue))
     }
@@ -95,7 +95,7 @@ where Tag == UnsafeMutableRawPointer.Memory, Base == UnsafeMutableRawPointer {
     @inlinable
     public func copy(
         from source: UnsafeRawPointer,
-        count: Index_Primitives.Index<UInt8>.Count
+        count: Index_Primitives_Core.Index<UInt8>.Count
     ) {
         unsafe base.copyMemory(from: source, byteCount: Int(count.count.rawValue))
     }

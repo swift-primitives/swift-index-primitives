@@ -33,7 +33,7 @@ where Tag == UnsafeMutableRawPointer.Memory.Move, Base == UnsafeMutableRawPointe
     public func initialize<T>(
         as type: T.Type,
         from source: UnsafeMutablePointer<T>,
-        count: Index_Primitives.Index<T>.Count
+        count: Index_Primitives_Core.Index<T>.Count
     ) -> UnsafeMutablePointer<T> {
         unsafe base.moveInitializeMemory(as: type, from: source, count: Int(count.count.rawValue))
     }

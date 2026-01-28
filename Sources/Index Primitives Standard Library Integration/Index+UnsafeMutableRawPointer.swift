@@ -11,8 +11,8 @@ extension UnsafeMutableRawPointer {
     /// Allocates uninitialized memory with typed count and alignment.
     @inlinable
     public static func allocate(
-        count: Index_Primitives.Index<UInt8>.Count,
-        alignment: Index_Primitives.Index<UInt8>.Count
+        count: Index_Primitives_Core.Index<UInt8>.Count,
+        alignment: Index_Primitives_Core.Index<UInt8>.Count
     ) -> Self {
         Self.allocate(byteCount: Int(count.count.rawValue), alignment: Int(alignment.count.rawValue))
     }
@@ -20,7 +20,7 @@ extension UnsafeMutableRawPointer {
     /// Returns a pointer offset by the specified typed byte offset.
     @inlinable
     public func advanced(
-        by offset: Index_Primitives.Index<UInt8>.Offset
+        by offset: Index_Primitives_Core.Index<UInt8>.Offset
     ) -> Self {
         unsafe self.advanced(by: offset.vector.rawValue)
     }
@@ -33,7 +33,7 @@ extension UnsafeMutableRawPointer {
     /// - Returns: A new instance of the given type.
     @inlinable
     public func load<T>(
-        fromByteOffset offset: Index_Primitives.Index<UInt8>.Offset,
+        fromByteOffset offset: Index_Primitives_Core.Index<UInt8>.Offset,
         as type: T.Type
     ) -> T {
         unsafe self.load(fromByteOffset: offset.vector.rawValue, as: type)

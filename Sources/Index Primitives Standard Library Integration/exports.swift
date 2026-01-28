@@ -6,4 +6,3 @@
 //
 
 @_exported import Index_Primitives_Core
-@_exported import Index_Primitives_Standard_Library_Integration

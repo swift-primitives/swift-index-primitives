@@ -45,7 +45,7 @@ extension Property_Primitives.Property {
     @inlinable
     public func initialize<Pointee>(
         from source: UnsafeMutablePointer<Pointee>,
-        count: Index_Primitives.Index<Pointee>.Count
+        count: Index_Primitives_Core.Index<Pointee>.Count
     ) where Tag == UnsafeMutablePointer<Pointee>.Move, Base == UnsafeMutablePointer<Pointee> {
         unsafe base.moveInitialize(from: source, count: Int(count.count.rawValue))
     }
@@ -61,7 +61,7 @@ extension Property_Primitives.Property {
     @inlinable
     public func update<Pointee>(
         from source: UnsafeMutablePointer<Pointee>,
-        count: Index_Primitives.Index<Pointee>.Count
+        count: Index_Primitives_Core.Index<Pointee>.Count
     ) where Tag == UnsafeMutablePointer<Pointee>.Move, Base == UnsafeMutablePointer<Pointee> {
         unsafe base.moveUpdate(from: source, count: Int(count.count.rawValue))
     }

@@ -33,6 +33,19 @@ let package = Package(
         .target(
             name: "Index Primitives",
             dependencies: [
+                .target(name: "Index Primitives Core"),
+                .target(name: "Index Primitives Standard Library Integration"),
+            ]
+        ),
+        .target(
+            name: "Index Primitives Standard Library Integration",
+            dependencies: [
+                .target(name: "Index Primitives Core"),
+            ]
+        ),
+        .target(
+            name: "Index Primitives Core",
+            dependencies: [
                 .product(name: "Ordinal Primitives", package: "swift-ordinal-primitives"),
                 .product(name: "Cardinal Primitives", package: "swift-cardinal-primitives"),
                 .product(name: "Affine Primitives", package: "swift-affine-primitives"),
