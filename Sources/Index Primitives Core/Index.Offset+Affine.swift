@@ -29,7 +29,7 @@ extension Tagged where RawValue == Affine.Discrete.Vector, Tag: ~Copyable {
     ///   exceeds `Int.max` and cannot be represented as a signed displacement.
     @inlinable
     public init(
-        _ index: Tagged<Tag, Ordinal.Position>
+        _ index: Tagged<Tag, Ordinal>
     ) throws(Affine.Discrete.Vector.Error) {
         self = try index - .zero
     }

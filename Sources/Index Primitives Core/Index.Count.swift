@@ -13,10 +13,10 @@ public import Cardinal_Primitives
 
 // MARK: - Index.Count (Tagged Typealias)
 
-extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
+extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
     /// A phantom-typed count for bounds checking.
     ///
-    /// `Index<Element>.Count` wraps `Cardinal.Count` with a phantom type,
+    /// `Index<Element>.Count` wraps `Cardinal` with a phantom type,
     /// preventing accidental comparison between indices and counts from
     /// different collection types.
     ///
@@ -44,7 +44,7 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// let elementCount: Index<Element>.Count = rangeCount.retag(Element.self)
     ///
     /// // Value transformation via map
-    /// let doubled = count.map { Cardinal.Count($0.rawValue * 2) }
+    /// let doubled = count.map { Cardinal($0.rawValue * 2) }
     /// ```
     ///
     /// ## Usage
@@ -53,13 +53,13 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// let count = Index<Tag>.Count(storage.count)
     /// guard node < count else { return nil }
     /// ```
-    public typealias Count = Tagged<Tag, Cardinal.Count>
+    public typealias Count = Tagged<Tag, Cardinal>
 }
 
 
 // MARK: - Index from Count
 
-extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
+extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
     /// Creates an index from a count.
     ///
     /// This is the canonical way to create an `endIndex` from a collection's count.
@@ -71,7 +71,7 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// ```
     @inlinable
     public init(_ count: Self.Count) {
-        self.init(__unchecked: (), Ordinal.Position(count.rawValue))
+        self.init(__unchecked: (), Ordinal(count.rawValue))
     }
 
     /// Creates an index from a count in a different tag domain.
@@ -82,14 +82,14 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     ///
     /// - Parameter count: A count from a different tag domain.
     @inlinable
-    public init<Other: ~Copyable>(_ count: Tagged<Other, Cardinal.Count>) {
-        self.init(__unchecked: (), Ordinal.Position(count.rawValue))
+    public init<Other: ~Copyable>(_ count: Tagged<Other, Cardinal>) {
+        self.init(__unchecked: (), Ordinal(count.rawValue))
     }
 }
 
 // MARK: - Count from Index
 
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     /// Creates a count from an index position.
     ///
     /// Semantically, position N means "N elements precede this position",
@@ -100,30 +100,30 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
     /// let count = Index<Element>.Count(index)  // Count of 5
     /// ```
     @inlinable
-    public init(_ index: Tagged<Tag, Ordinal.Position>) {
-        self.init(__unchecked: (), Cardinal.Count(index.rawValue.rawValue))
+    public init(_ index: Tagged<Tag, Ordinal>) {
+        self.init(__unchecked: (), Cardinal(index.rawValue))
     }
 
     /// Creates a count from an index in a different tag domain.
     @inlinable
-    public init<Other: ~Copyable>(_ index: Tagged<Other, Ordinal.Position>) {
-        self.init(__unchecked: (), Cardinal.Count(index.rawValue.rawValue))
+    public init<Other: ~Copyable>(_ index: Tagged<Other, Ordinal>) {
+        self.init(__unchecked: (), Cardinal(index.rawValue))
     }
 }
 
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     // MARK: - Constants
 
     /// The zero count.
     @inlinable
     @_disfavoredOverload
     public static var zero: Self {
-        Self(__unchecked: (), Cardinal.Count.zero)
+        Self(__unchecked: (), Cardinal.zero)
     }
 
     /// The count of one.
     @inlinable
     public static var one: Self {
-        Self(__unchecked: (), Cardinal.Count.one)
+        Self(__unchecked: (), Cardinal.one)
     }
 }

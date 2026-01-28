@@ -14,20 +14,20 @@ import Affine_Primitives
 
 // MARK: - Count from Offset Conversion
 
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     /// Creates a count from a non-negative offset.
     ///
     /// This is the canonical conversion from `Offset` to `Count`, validating that
     /// the offset is non-negative (since `Count` represents a magnitude).
     ///
     /// - Parameter offset: The offset (must be non-negative).
-    /// - Throws: `Cardinal.Count.Error.negativeSource` if offset is negative.
+    /// - Throws: `Cardinal.Error.negativeSource` if offset is negative.
     @inlinable
-    public init(_ offset: Tagged<Tag, Affine.Discrete.Vector>) throws(Cardinal.Count.Error) {
+    public init(_ offset: Tagged<Tag, Affine.Discrete.Vector>) throws(Cardinal.Error) {
         guard offset.rawValue.rawValue >= 0 else {
             throw .negativeSource(offset.rawValue.rawValue)
         }
-        self.init(__unchecked: (), offset.rawValue.rawValue)
+        self.init(__unchecked: (), Cardinal(UInt(offset.rawValue.rawValue)))
     }
 
     /// Creates a count from an offset without validation.
@@ -38,84 +38,6 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
     @inlinable
     public init(__unchecked: Void, _ offset: Tagged<Tag, Affine.Discrete.Vector>) {
         assert(offset.rawValue.rawValue >= 0, "Offset must be non-negative for unchecked Count conversion")
-        self.init(__unchecked: (), offset.rawValue.rawValue)
+        self.init(__unchecked: (), Cardinal(UInt(offset.rawValue.rawValue)))
     }
-}
-
-// MARK: - Arithmetic
-
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
-    /// Adds two counts (trapping on overflow).
-    @inlinable
-    public static func + (lhs: Self, rhs: Self) -> Self {
-        Self(__unchecked: (), lhs.rawValue + rhs.rawValue)
-    }
-}
-
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
-    /// Multiplies a count by an unsigned integer.
-    @inlinable
-    public static func * (lhs: Self, rhs: UInt) -> Self {
-        Self(__unchecked: (), Cardinal.Count(lhs.rawValue.rawValue * rhs))
-    }
-
-    /// Multiplies an unsigned integer by a count.
-    @inlinable
-    public static func * (lhs: UInt, rhs: Self) -> Self {
-        Self(__unchecked: (), Cardinal.Count(lhs * rhs.rawValue.rawValue))
-    }
-}
-
-// MARK: - Compound Assignment
-
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
-    /// Increments the count by another count.
-    @inlinable
-    public static func += (lhs: inout Self, rhs: Self) {
-        lhs = lhs + rhs
-    }
-}
-
-
-// MARK: - Index < Count Comparison
-
-/// Checks if an index is within bounds for a collection of the given count.
-///
-/// This is the fundamental bounds check with phantom type safety.
-@inlinable
-public func < <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
-    lhs.position.rawValue < rhs.rawValue.rawValue
-}
-
-/// Checks if an index is at or beyond the bounds.
-@inlinable
-public func >= <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
-    lhs.position.rawValue >= rhs.rawValue.rawValue
-}
-
-/// Checks if a count is greater than an index (index is in bounds).
-@inlinable
-public func > <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
-    lhs.rawValue.rawValue > rhs.position.rawValue
-}
-
-/// Checks if a count is at or below an index (index is out of bounds).
-@inlinable
-public func <= <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
-    lhs.rawValue.rawValue <= rhs.position.rawValue
-}
-
-/// Checks if an index is a valid endpoint (at or before count).
-///
-/// Unlike `<`, this allows `index == count` which represents the one-past-end
-/// position — valid for range endpoints and slice bounds, but not for subscript access.
-@inlinable
-public func <= <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
-    lhs.position.rawValue <= rhs.rawValue.rawValue
-}
-
-/// Checks if an index is strictly past the end.
-@inlinable
-public func > <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
-    lhs.position.rawValue > rhs.rawValue.rawValue
 }

@@ -30,19 +30,19 @@ extension IndexTests.Unit {
     @Test("init with valid position")
     func initWithValidPosition() throws {
         let index: Index<Int> = try Index(5)
-        #expect(index.position.rawValue == 5)
+        #expect(index.position == 5)
     }
 
     @Test("init with zero position")
     func initWithZeroPosition() throws {
         let index: Index<String> = try Index(0)
-        #expect(index.position.rawValue == 0)
+        #expect(index.position == 0)
     }
 
     @Test("unchecked init bypasses validation")
     func uncheckedInit() {
-        let index: Index<Int> = Index(__unchecked: (), Ordinal.Position(42))
-        #expect(index.position.rawValue == 42)
+        let index: Index<Int> = Index(__unchecked: (), Ordinal(42))
+        #expect(index.position == 42)
     }
 
     @Test("position property returns rawValue")
@@ -103,14 +103,14 @@ extension IndexTests.Unit {
 extension IndexTests.EdgeCase {
     @Test("init with negative position throws error")
     func negativePositionThrows() {
-        #expect(throws: Ordinal.Position.Error.negativeSource(-1)) {
+        #expect(throws: Ordinal.Error.negativeSource(-1)) {
             let _: Index<Int> = try Index(-1)
         }
     }
 
     @Test("init with large negative position throws error")
     func largeNegativePositionThrows() {
-        #expect(throws: Ordinal.Position.Error.negativeSource(Int.min)) {
+        #expect(throws: Ordinal.Error.negativeSource(Int.min)) {
             let _: Index<Int> = try Index(Int.min)
         }
     }
@@ -122,11 +122,11 @@ extension IndexTests.EdgeCase {
         #expect(index == expected)
     }
 
-    @Test("Ordinal.Position.Error is equatable")
+    @Test("Ordinal.Error is equatable")
     func errorEquatable() {
-        let a = Ordinal.Position.Error.negativeSource(-5)
-        let b = Ordinal.Position.Error.negativeSource(-5)
-        let c = Ordinal.Position.Error.negativeSource(-10)
+        let a = Ordinal.Error.negativeSource(-5)
+        let b = Ordinal.Error.negativeSource(-5)
+        let c = Ordinal.Error.negativeSource(-10)
         #expect(a == b)
         #expect(a != c)
     }

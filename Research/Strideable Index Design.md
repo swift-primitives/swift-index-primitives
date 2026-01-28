@@ -81,7 +81,7 @@ extension Index: Strideable where Tag: ~Copyable {
     }
 
     public func distance(to other: Self) -> Stride {
-        other.position.rawValue - position.rawValue
+        other.position - position.rawValue
     }
 }
 ```

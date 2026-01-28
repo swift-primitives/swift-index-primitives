@@ -18,8 +18,8 @@ Should `Index<Element>.Count` and `Index<Element>.Offset` be restructured from n
 ## Context
 
 Currently:
-- `Index<E>` = `Tagged<E, Ordinal.Position>` ✓ (IS a Tagged type)
-- `Index<E>.Count` = nested struct wrapping `Cardinal.Count`
+- `Index<E>` = `Tagged<E, Ordinal>` ✓ (IS a Tagged type)
+- `Index<E>.Count` = nested struct wrapping `Cardinal`
 - `Index<E>.Offset` = nested struct wrapping `Affine.Discrete.Vector`
 
 The nested struct approach requires manual implementations of:
@@ -34,9 +34,9 @@ The observation: Tagged already provides `retag()` and `map()` functors, but the
 ### Option 1: Current Design (Nested Structs)
 
 ```swift
-extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
+extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
     public struct Count: Hashable, Comparable, Sendable {
-        public let count: Cardinal.Count
+        public let count: Cardinal
         // Manual conformances, manual cross-domain init, manual arithmetic
     }
 
@@ -50,22 +50,22 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
 ### Option 2: Tagged Typealiases
 
 ```swift
-extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
-    public typealias Count = Tagged<Tag, Cardinal.Count>
+extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
+    public typealias Count = Tagged<Tag, Cardinal>
     public typealias Offset = Tagged<Tag, Affine.Discrete.Vector>
 }
 ```
 
-Then `Index<Foo>.Count` = `Tagged<Foo, Cardinal.Count>` and all Tagged machinery applies.
+Then `Index<Foo>.Count` = `Tagged<Foo, Cardinal>` and all Tagged machinery applies.
 
 ### Option 3: Hybrid (Tagged with Extension Methods)
 
 Same as Option 2, but add convenience extensions to maintain current API:
 
 ```swift
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     @inlinable
-    public var count: Cardinal.Count { rawValue }
+    public var count: Cardinal { rawValue }
 
     @inlinable
     public static var zero: Self { Self(__unchecked: (), .zero) }
@@ -126,17 +126,17 @@ Option 2/3 provides uniform Tagged semantics across all phantom-typed index type
 | Current API | Option 1 | Option 2 | Option 3 |
 |-------------|----------|----------|----------|
 | `count.count` | ✓ | ❌ → `count.rawValue` | ✓ via `count` computed property |
-| `count.rawValue` (UInt) | ✓ | ❌ → `count.rawValue.rawValue` | ✓ via extension |
+| `count.rawValue` (UInt) | ✓ | ❌ → `count.rawValue` | ✓ via extension |
 | `.zero`, `.one` | ✓ | Needs extension | ✓ via extension |
 | `Index.Count(5 as UInt)` | ✓ | Needs extension | ✓ via extension |
 
-**Option 3 can preserve the entire current API** through extensions on `Tagged where RawValue == Cardinal.Count`.
+**Option 3 can preserve the entire current API** through extensions on `Tagged where RawValue == Cardinal`.
 
 ### Migration Complexity
 
 **Source-breaking changes with Option 2 (no extensions):**
 - `count.count` → `count.rawValue`
-- `count.rawValue` → `count.rawValue.rawValue`
+- `count.rawValue` → `count.rawValue`
 
 **With Option 3:**
 - No source-breaking changes if extensions provide compatibility API
@@ -168,15 +168,15 @@ Restructure `Index.Count` and `Index.Offset` as Tagged typealiases, with extensi
 
 ```swift
 // Type definitions
-extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
-    public typealias Count = Tagged<Tag, Cardinal.Count>
+extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
+    public typealias Count = Tagged<Tag, Cardinal>
     public typealias Offset = Tagged<Tag, Affine.Discrete.Vector>
 }
 
 // API compatibility extensions
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     @inlinable
-    public var count: Cardinal.Count { rawValue }
+    public var count: Cardinal { rawValue }
 
     @inlinable
     public var rawValue: UInt { rawValue.rawValue }  // Shadows for convenience
@@ -194,7 +194,7 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
 ## Implementation Notes
 
 1. Move typealias definitions to Index.Count.swift and Index.Offset.swift
-2. Convert struct body to extension on `Tagged where RawValue == Cardinal.Count`
+2. Convert struct body to extension on `Tagged where RawValue == Cardinal`
 3. Convert cross-domain init to documentation recommending `retag()`
 4. Update tests to verify functor operations work
 5. Verify all consumers still compile
@@ -230,7 +230,7 @@ Prototype file: `Tests/Index Primitives Tests/Index.Count.Tagged.Experiment.swif
 ```
 
 **Key Findings:**
-1. `Tagged<Tag, Cardinal.Count>` works as a drop-in replacement
+1. `Tagged<Tag, Cardinal>` works as a drop-in replacement
 2. All Tagged functor operations (`retag`, `map`) work correctly
 3. Equatable, Hashable, Comparable derive automatically
 4. Extensions can maintain full API compatibility

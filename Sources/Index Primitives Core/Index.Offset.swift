@@ -14,7 +14,7 @@ public import Affine_Primitives
 
 // MARK: - Index.Offset (Tagged Typealias)
 
-extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
+extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
     /// The displacement type for this index.
     ///
     /// Wraps `Affine.Discrete.Vector` to maintain phantom type safety.
@@ -70,6 +70,14 @@ extension Tagged where RawValue == Affine.Discrete.Vector, Tag: ~Copyable {
     @inlinable
     public init(_ rawValue: Int) {
         self.init(__unchecked: (), Affine.Discrete.Vector(rawValue))
+    }
+
+    /// Creates an offset from a count.
+    ///
+    /// This is a total operation since counts are always non-negative.
+    @inlinable
+    public init<T: ~Copyable>(_ count: Tagged<T, Cardinal>) {
+        self.init(__unchecked: (), Affine.Discrete.Vector(Int(count.rawValue.rawValue)))
     }
 
     // MARK: - Constants

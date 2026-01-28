@@ -14,31 +14,31 @@ import Testing
 
 /// A prototype of Index.Count as a Tagged typealias.
 /// If this works, we can migrate the real Index.Count.
-typealias ExperimentalCount<Tag: ~Copyable> = Tagged<Tag, Cardinal.Count>
+typealias ExperimentalCount<Tag: ~Copyable> = Tagged<Tag, Cardinal>
 
 // MARK: - API Compatibility Extensions
 // Note: No @inlinable in test code - those would be added in the real implementation
 
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
 
     /// Creates a typed count from an unsigned integer (prototype).
     init(experimentUInt rawValue: UInt) {
-        self.init(__unchecked: (), Cardinal.Count(rawValue))
+        self.init(__unchecked: (), Cardinal(rawValue))
     }
 
     /// Creates a typed count from a signed integer (prototype).
-    init(experimentInt rawValue: Int) throws(Cardinal.Count.Error) {
-        self.init(__unchecked: (), try Cardinal.Count(rawValue))
+    init(experimentInt rawValue: Int) throws(Cardinal.Error) {
+        self.init(__unchecked: (), try Cardinal(rawValue))
     }
 
     /// The zero count (prototype).
     static var experimentZero: Self {
-        Self(__unchecked: (), Cardinal.Count.zero)
+        Self(__unchecked: (), Cardinal.zero)
     }
 
     /// The count of one (prototype).
     static var experimentOne: Self {
-        Self(__unchecked: (), Cardinal.Count.one)
+        Self(__unchecked: (), Cardinal.one)
     }
 
     /// Prototype addition.
@@ -55,26 +55,26 @@ struct IndexCountTaggedExperiment {
     @Test("Construction from UInt")
     func constructionUInt() {
         let count = ExperimentalCount<Int>(experimentUInt: 42)
-        #expect(count.rawValue.rawValue == 42)
+        #expect(count.rawValue == 42)
     }
 
     @Test("Construction from Int")
     func constructionInt() throws {
         let count = try ExperimentalCount<Int>(experimentInt: 42)
-        #expect(count.rawValue.rawValue == 42)
+        #expect(count.rawValue == 42)
     }
 
     @Test("Construction from negative Int throws")
     func constructionNegativeThrows() {
-        #expect(throws: Cardinal.Count.Error.self) {
+        #expect(throws: Cardinal.Error.self) {
             _ = try ExperimentalCount<Int>(experimentInt: -1)
         }
     }
 
     @Test("Static constants")
     func staticConstants() {
-        #expect(ExperimentalCount<Int>.experimentZero.rawValue.rawValue == 0)
-        #expect(ExperimentalCount<Int>.experimentOne.rawValue.rawValue == 1)
+        #expect(ExperimentalCount<Int>.experimentZero.rawValue == 0)
+        #expect(ExperimentalCount<Int>.experimentOne.rawValue == 1)
     }
 
     @Test("Equality (free from Tagged)")
@@ -116,7 +116,7 @@ struct IndexCountTaggedExperiment {
         let b = ExperimentalCount<Int>(experimentUInt: 10)
 
         let sum = ExperimentalCount<Int>.experimentAdd(a, b)
-        #expect(sum.rawValue.rawValue == 15)
+        #expect(sum.rawValue == 15)
     }
 
     @Test("retag() - THE KEY BENEFIT")
@@ -126,17 +126,17 @@ struct IndexCountTaggedExperiment {
         // This is what we gain: retag just works!
         let stringCount: ExperimentalCount<String> = intCount.retag(String.self)
 
-        #expect(stringCount.rawValue.rawValue == 42)
+        #expect(stringCount.rawValue == 42)
     }
 
     @Test("map() - transform raw value")
     func map() {
         let count = ExperimentalCount<Int>(experimentUInt: 5)
 
-        // Transform the underlying Cardinal.Count
-        let doubled = count.map { Cardinal.Count($0.rawValue * 2) }
+        // Transform the underlying Cardinal
+        let doubled = count.map { Cardinal($0.rawValue * 2) }
 
-        #expect(doubled.rawValue.rawValue == 10)
+        #expect(doubled.rawValue == 10)
     }
 
     @Test("Cross-domain conversion via retag")
@@ -149,7 +149,7 @@ struct IndexCountTaggedExperiment {
         // New pattern uses retag directly:
         let destCount: ExperimentalCount<String> = sourceCount.retag()
 
-        #expect(destCount.rawValue.rawValue == 100)
+        #expect(destCount.rawValue == 100)
     }
 
     @Test("Phantom type safety preserved")

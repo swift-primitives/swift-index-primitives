@@ -17,9 +17,9 @@ import Cardinal_Primitives
 
  Instead of:
  ```swift
- extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
+ extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
      public struct Count: Hashable, Comparable, Sendable {
-         public let count: Cardinal.Count
+         public let count: Cardinal
          // ... 100+ lines of manual implementations
      }
  }
@@ -27,12 +27,12 @@ import Cardinal_Primitives
 
  We define:
  ```swift
- extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
-     public typealias Count = Tagged<Tag, Cardinal.Count>
+ extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
+     public typealias Count = Tagged<Tag, Cardinal>
  }
  ```
 
- Then Index<Foo>.Count = Tagged<Foo, Cardinal.Count>
+ Then Index<Foo>.Count = Tagged<Foo, Cardinal>
 
  All Tagged machinery (retag, map, Equatable, Hashable, Comparable, Sendable) applies automatically.
 */
@@ -40,17 +40,17 @@ import Cardinal_Primitives
 // MARK: - Simulated typealias (can't actually redefine in same module)
 
 // For prototype purposes, we'll define a parallel type to test the approach
-typealias ProtoCount<Tag: ~Copyable> = Tagged<Tag, Cardinal.Count>
+typealias ProtoCount<Tag: ~Copyable> = Tagged<Tag, Cardinal>
 
 // MARK: - API Compatibility Extensions
 
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
 
     // MARK: Compatibility Properties
 
     /// The underlying cardinal count (API compatibility with nested struct).
     @inlinable
-    var count: Cardinal.Count { rawValue }
+    var count: Cardinal { rawValue }
 
     // Note: Can't shadow rawValue, but could provide:
     // @inlinable
@@ -61,20 +61,20 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
     /// Creates a typed count from an unsigned integer.
     @inlinable
     init(_ rawValue: UInt) {
-        self.init(__unchecked: (), Cardinal.Count(rawValue))
+        self.init(__unchecked: (), Cardinal(rawValue))
     }
 
     /// Creates a typed count from a signed integer.
-    /// - Throws: `Cardinal.Count.Error.negativeSource` if negative.
+    /// - Throws: `Cardinal.Error.negativeSource` if negative.
     @inlinable
-    init(_ rawValue: Int) throws(Cardinal.Count.Error) {
-        self.init(__unchecked: (), try Cardinal.Count(rawValue))
+    init(_ rawValue: Int) throws(Cardinal.Error) {
+        self.init(__unchecked: (), try Cardinal(rawValue))
     }
 
     /// Creates a typed count without validation.
     @inlinable
     init(__unchecked: Void, _ rawValue: Int) {
-        self.init(__unchecked: (), Cardinal.Count(UInt(rawValue)))
+        self.init(__unchecked: (), Cardinal(UInt(rawValue)))
     }
 
     // MARK: Constants
@@ -82,19 +82,19 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
     /// The zero count.
     @inlinable
     static var zero: Self {
-        Self(__unchecked: (), Cardinal.Count.zero)
+        Self(__unchecked: (), Cardinal.zero)
     }
 
     /// The count of one.
     @inlinable
     static var one: Self {
-        Self(__unchecked: (), Cardinal.Count.one)
+        Self(__unchecked: (), Cardinal.one)
     }
 }
 
 // MARK: - Arithmetic (still needed, but simpler)
 
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     /// Adds two counts (trapping on overflow).
     @inlinable
     static func + (lhs: Self, rhs: Self) -> Self {
@@ -110,7 +110,7 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
 
 // MARK: - Cross-Domain Conversion (NOW USES RETAG!)
 
-extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
+extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     /// Creates a count by retagging from a different tag domain.
     ///
     /// **New pattern**: Uses Tagged.retag() instead of manual init.
@@ -121,7 +121,7 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
     /// let elementCount = Index<Element>.Count(rangeCount)  // backward compat
     /// ```
     @inlinable
-    init<Other: ~Copyable>(_ other: Tagged<Other, Cardinal.Count>) {
+    init<Other: ~Copyable>(_ other: Tagged<Other, Cardinal>) {
         // Implementation using retag semantics
         self = other.retag(Tag.self)
     }
@@ -132,10 +132,10 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
 /*
  FROM TAGGED CONDITIONAL CONFORMANCES:
 
- - Equatable (when RawValue: Equatable) ✓ Cardinal.Count is Equatable
- - Hashable (when RawValue: Hashable) ✓ Cardinal.Count is Hashable
- - Comparable (when RawValue: Comparable) ✓ Cardinal.Count is Comparable
- - Sendable (when RawValue: Sendable) ✓ Cardinal.Count is Sendable
+ - Equatable (when RawValue: Equatable) ✓ Cardinal is Equatable
+ - Hashable (when RawValue: Hashable) ✓ Cardinal is Hashable
+ - Comparable (when RawValue: Comparable) ✓ Cardinal is Comparable
+ - Sendable (when RawValue: Sendable) ✓ Cardinal is Sendable
 
  NO MANUAL OPERATORS NEEDED FOR:
  - ==
@@ -165,7 +165,7 @@ func validatePrototype() {
 
     // Test 4: Arithmetic
     let sum = count1 + count2
-    assert(sum.rawValue.rawValue == 15)
+    assert(sum.rawValue == 15)
 
     // Test 5: Retag (THIS IS THE KEY BENEFIT)
     let retagged: ProtoCount<String> = count1.retag(String.self)
@@ -176,12 +176,12 @@ func validatePrototype() {
     assert(converted.rawValue == count1.rawValue)
 
     // Test 7: Static constants
-    assert(ProtoCount<Int>.zero.rawValue.rawValue == 0)
-    assert(ProtoCount<Int>.one.rawValue.rawValue == 1)
+    assert(ProtoCount<Int>.zero.rawValue == 0)
+    assert(ProtoCount<Int>.one.rawValue == 1)
 
     // Test 8: Map (transform raw value)
-    let doubled = count1.map { Cardinal.Count($0.rawValue * 2) }
-    assert(doubled.rawValue.rawValue == 10)
+    let doubled = count1.map { Cardinal($0.rawValue * 2) }
+    assert(doubled.rawValue == 10)
 
     print("✓ All prototype validations passed")
 }

@@ -14,7 +14,7 @@ public import Ordinal_Primitives
 
 /// A phantom-typed index for type-safe collection access.
 ///
-/// `Index<Element>` wraps `Ordinal.Position` with a phantom type
+/// `Index<Element>` wraps `Ordinal` with a phantom type
 /// that prevents indices from different collections being confused.
 ///
 /// ## Type Safety
@@ -35,14 +35,14 @@ public import Ordinal_Primitives
 /// let newIdx = try idx + offset  // Index<Bit> at position 8
 /// let distance = newIdx - idx    // Offset of 3
 /// ```
-public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal.Position>
+public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal>
 
 // MARK: - Index Construction
 
-extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
+extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
     /// The underlying position.
     @inlinable
-    public var position: Ordinal.Position { rawValue }
+    public var position: Ordinal { rawValue }
 
     /// The zero index.
     public static var zero: Self { .init(__unchecked: (), .zero) }
@@ -64,17 +64,17 @@ extension Tagged where RawValue == Ordinal.Position, Tag: ~Copyable {
     /// Construct from an integer, throwing if negative.
     ///
     /// - Parameter position: The position value. Must be non-negative.
-    /// - Throws: `Ordinal.Position.Error.negativeSource` if position is negative.
+    /// - Throws: `Ordinal.Error.negativeSource` if position is negative.
     @inlinable
-    public init(_ position: Int) throws(Ordinal.Position.Error) {
-        self.init(__unchecked: (), try Ordinal.Position(position))
+    public init(_ position: Int) throws(Ordinal.Error) {
+        self.init(__unchecked: (), try Ordinal(position))
     }
 }
 
 // MARK: - CustomStringConvertible
 
 extension Tagged: @retroactive CustomStringConvertible
-where RawValue == Ordinal.Position, Tag: ~Copyable {
+where RawValue == Ordinal, Tag: ~Copyable {
     public var description: String {
         "Index<\(Tag.self)>(\(rawValue.rawValue))"
     }
