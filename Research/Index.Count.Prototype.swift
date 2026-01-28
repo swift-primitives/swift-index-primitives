@@ -108,25 +108,6 @@ extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     }
 }
 
-// MARK: - Cross-Domain Conversion (NOW USES RETAG!)
-
-extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
-    /// Creates a count by retagging from a different tag domain.
-    ///
-    /// **New pattern**: Uses Tagged.retag() instead of manual init.
-    ///
-    /// ```swift
-    /// let rangeCount: Index<Range>.Count = ...
-    /// let elementCount = rangeCount.retag(Element.self)  // or:
-    /// let elementCount = Index<Element>.Count(rangeCount)  // backward compat
-    /// ```
-    @inlinable
-    init<Other: ~Copyable>(_ other: Tagged<Other, Cardinal>) {
-        // Implementation using retag semantics
-        self = other.retag(Tag.self)
-    }
-}
-
 // MARK: - What We Get For Free
 
 /*
