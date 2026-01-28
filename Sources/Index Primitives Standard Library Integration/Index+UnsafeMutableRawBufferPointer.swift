@@ -14,7 +14,10 @@ extension UnsafeMutableRawBufferPointer {
         start: UnsafeMutableRawPointer?,
         count: Index_Primitives_Core.Index<UInt8>.Count
     ) {
-        unsafe self.init(start: start, count: try! Int(count.count))
+        unsafe self.init(
+            start: start,
+            count: try! Int(count.count)
+        )
     }
 
     /// Allocates uninitialized memory with typed count and alignment.
