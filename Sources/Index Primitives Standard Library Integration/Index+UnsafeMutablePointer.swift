@@ -13,7 +13,7 @@ public func + <Pointee: ~Copyable>(
     lhs: UnsafeMutablePointer<Pointee>,
     rhs: Index<Pointee>
 ) -> UnsafeMutablePointer<Pointee> {
-    unsafe lhs + Int(rhs.position.rawValue)
+    try! unsafe lhs + Int(rhs.position)
 }
 
 /// Advances a mutable pointer by a typed index offset.
@@ -22,7 +22,7 @@ public func + <Pointee: ~Copyable>(
     lhs: Index<Pointee>,
     rhs: UnsafeMutablePointer<Pointee>
 ) -> UnsafeMutablePointer<Pointee> {
-    unsafe rhs + Int(lhs.position.rawValue)
+    try! unsafe rhs + Int(lhs.position)
 }
 
 /// Subtracts a typed index offset from a mutable pointer.
@@ -31,7 +31,7 @@ public func - <Pointee: ~Copyable>(
     lhs: UnsafeMutablePointer<Pointee>,
     rhs: Index<Pointee>
 ) -> UnsafeMutablePointer<Pointee> {
-    unsafe lhs - Int(rhs.position.rawValue)
+    try! unsafe lhs - Int(rhs.position)
 }
 
 // MARK: - UnsafeMutablePointer Subscript
@@ -76,7 +76,7 @@ extension UnsafeMutablePointer {
         repeating repeatedValue: Pointee,
         count: Index_Primitives_Core.Index<Pointee>.Count
     ) {
-        unsafe self.initialize(repeating: repeatedValue, count: Int(count.count.rawValue))
+        try! unsafe self.initialize(repeating: repeatedValue, count: Int(count.count))
     }
 
     /// Deinitializes the specified number of values starting at this pointer.
@@ -88,7 +88,7 @@ extension UnsafeMutablePointer {
     public func deinitialize(
         count: Index_Primitives_Core.Index<Pointee>.Count
     ) -> UnsafeMutableRawPointer {
-        unsafe self.deinitialize(count: Int(count.count.rawValue))
+        try! unsafe self.deinitialize(count: Int(count.count))
     }
 
     /// Updates this pointer's initialized memory with the specified number
@@ -102,6 +102,6 @@ extension UnsafeMutablePointer {
         repeating repeatedValue: Pointee,
         count: Index_Primitives_Core.Index<Pointee>.Count
     ) {
-        unsafe self.update(repeating: repeatedValue, count: Int(count.count.rawValue))
+        try! unsafe self.update(repeating: repeatedValue, count: Int(count.count))
     }
 }

@@ -22,7 +22,7 @@ extension UnsafeBufferPointer where Element: ~Copyable {
         start: UnsafePointer<Element>?,
         count: Index_Primitives_Core.Index<Element>.Count
     ) {
-        unsafe self.init(start: start, count: Int(count.count.rawValue))
+        try! unsafe self.init(start: start, count: Int(count.count))
     }
 }
 
@@ -44,6 +44,6 @@ extension UnsafeBufferPointer {
     public subscript(
         _ index: Index_Primitives_Core.Index<Element>
     ) -> Element {
-        unsafe self[Int(index.position.rawValue)]
+        try! unsafe self[Int(index.position)]
     }
 }

@@ -22,7 +22,7 @@ extension UnsafeMutableBufferPointer where Element: ~Copyable {
         start: UnsafeMutablePointer<Element>?,
         count: Index_Primitives_Core.Index<Element>.Count
     ) {
-        unsafe self.init(start: start, count: Int(count.count.rawValue))
+        try! unsafe self.init(start: start, count: Int(count.count))
     }
 }
 
@@ -44,7 +44,11 @@ extension UnsafeMutableBufferPointer {
     public subscript(
         _ index: Index_Primitives_Core.Index<Element>
     ) -> Element {
-        get { unsafe self[Int(index.position.rawValue)] }
-        nonmutating set { unsafe self[Int(index.position.rawValue)] = newValue }
+        get {
+            try! unsafe self[Int(index.position)]
+        }
+        nonmutating set {
+            try! unsafe self[Int(index.position)] = newValue
+        }
     }
 }

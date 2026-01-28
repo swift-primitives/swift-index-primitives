@@ -24,7 +24,10 @@ extension Span where Element: ~Copyable {
         _unsafeStart start: UnsafePointer<Element>,
         count: Index_Primitives_Core.Index<Element>.Count
     ) {
-        let span = unsafe Span(_unsafeStart: start, count: Int(count.count.rawValue))
+        let span = try! unsafe Span(
+            _unsafeStart: start,
+            count: Int(count.count)
+        )
         self = unsafe _overrideLifetime(span, borrowing: ())
     }
 }

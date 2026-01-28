@@ -14,7 +14,7 @@ extension UnsafeMutableRawPointer {
         count: Index_Primitives_Core.Index<UInt8>.Count,
         alignment: Index_Primitives_Core.Index<UInt8>.Count
     ) -> Self {
-        Self.allocate(byteCount: Int(count.count.rawValue), alignment: Int(alignment.count.rawValue))
+        try! Self.allocate(byteCount: Int(count.count), alignment: Int(alignment.count))
     }
 
     /// Returns a pointer offset by the specified typed byte offset.

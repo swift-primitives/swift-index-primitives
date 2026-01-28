@@ -14,7 +14,10 @@ extension UnsafeRawBufferPointer {
         start: UnsafeRawPointer?,
         count: Index_Primitives_Core.Index<UInt8>.Count
     ) {
-        unsafe self.init(start: start, count: Int(count.count.rawValue))
+        unsafe try! self.init(
+            start: start,
+            count: Int(count.count)
+        )
     }
 
     /// Accesses the byte at the given typed index.
@@ -22,7 +25,7 @@ extension UnsafeRawBufferPointer {
     public subscript(
         _ index: Index_Primitives_Core.Index<UInt8>
     ) -> UInt8 {
-        unsafe self[Int(index.position.rawValue)]
+        unsafe try! self[Int(index.position)]
     }
 
     /// Returns a new instance of the given type, read from the specified offset.
