@@ -56,20 +56,5 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
     public init(__unchecked: Void, _ rawValue: Int) {
         self.init(__unchecked: (), Cardinal.Count(UInt(rawValue)))
     }
-
-    // MARK: - Constants
-
-    /// The zero count.
-    @inlinable
-    @_disfavoredOverload
-    public static var zero: Self {
-        Self(__unchecked: (), Cardinal.Count.zero)
-    }
-
-    /// The count of one.
-    @inlinable
-    public static var one: Self {
-        Self(__unchecked: (), Cardinal.Count.one)
-    }
 }
 

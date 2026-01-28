@@ -75,3 +75,47 @@ extension Tagged where RawValue == Cardinal.Count, Tag: ~Copyable {
         lhs = lhs + rhs
     }
 }
+
+
+// MARK: - Index < Count Comparison
+
+/// Checks if an index is within bounds for a collection of the given count.
+///
+/// This is the fundamental bounds check with phantom type safety.
+@inlinable
+public func < <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
+    lhs.position.rawValue < rhs.rawValue.rawValue
+}
+
+/// Checks if an index is at or beyond the bounds.
+@inlinable
+public func >= <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
+    lhs.position.rawValue >= rhs.rawValue.rawValue
+}
+
+/// Checks if a count is greater than an index (index is in bounds).
+@inlinable
+public func > <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
+    lhs.rawValue.rawValue > rhs.position.rawValue
+}
+
+/// Checks if a count is at or below an index (index is out of bounds).
+@inlinable
+public func <= <Tag: ~Copyable>(lhs: Index<Tag>.Count, rhs: Index<Tag>) -> Bool {
+    lhs.rawValue.rawValue <= rhs.position.rawValue
+}
+
+/// Checks if an index is a valid endpoint (at or before count).
+///
+/// Unlike `<`, this allows `index == count` which represents the one-past-end
+/// position — valid for range endpoints and slice bounds, but not for subscript access.
+@inlinable
+public func <= <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
+    lhs.position.rawValue <= rhs.rawValue.rawValue
+}
+
+/// Checks if an index is strictly past the end.
+@inlinable
+public func > <Tag: ~Copyable>(lhs: Index<Tag>, rhs: Index<Tag>.Count) -> Bool {
+    lhs.position.rawValue > rhs.rawValue.rawValue
+}
