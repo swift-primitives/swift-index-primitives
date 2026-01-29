@@ -114,7 +114,7 @@ let index = Index<Int>(cardinal)
 
 ---
 
-### [IDX-006] Index Arithmetic
+### [IDX-006] Index Arithmetic with Offset
 
 **Statement**: Use `Index + Offset → Index` and `Index - Index → Offset`.
 
@@ -122,18 +122,126 @@ let index = Index<Int>(cardinal)
 let start: Index<Int> = try Index(5)
 let offset: Index<Int>.Offset = 3
 
-// Advance by offset
-let end = start + offset  // Index at position 8
+// Advance by offset (may throw on underflow)
+let end = try start + offset  // Index at position 8
 
 // Compute displacement
-let distance: Index<Int>.Offset = end - start  // Offset of 3
+let distance: Index<Int>.Offset = try end - start  // Offset of 3
 ```
 
 **Arithmetic**:
-- `Index + Offset → Index`
-- `Index - Offset → Index`
-- `Offset + Index → Index` (commutative)
-- `Index - Index → Offset`
+- `Index + Offset → Index` (throws)
+- `Index - Offset → Index` (throws)
+- `Offset + Index → Index` (commutative, throws)
+- `Index - Index → Offset` (throws)
+
+---
+
+### [IDX-006a] Index Arithmetic with Count (Total)
+
+**Statement**: Use `Index + Count → Index` for forward advancement. This is **total** (non-throwing).
+
+```swift
+var position: Index<Int> = .zero
+let count: Index<Int>.Count = try Index<Int>.Count(3)
+
+// Advance by count - pure typed arithmetic, total!
+position = position + count  // Index at position 3
+
+// Single element increment
+position = position + .one   // Index at position 4
+```
+
+**Arithmetic**:
+- `Index + Count → Index` (total, from ordinal-primitives)
+- `Count + Index → Index` (commutative)
+
+**Key insight**: `Index + Count` is total because both are non-negative. Prefer this over `Index + Offset` when the displacement is known to be non-negative.
+
+---
+
+### [IDX-006b] Typed Position as Primary Representation
+
+**Statement**: When wrapping stdlib collections, store `Index<Element>` as the primary position representation. Derive raw `Storage.Index` only at subscript boundaries.
+
+```swift
+struct Cursor<Base: RandomAccessCollection> {
+    let base: Base
+    var position: Index<Base.Element>  // PRIMARY: typed index
+
+    // Derive raw index only for subscripting (O(1) for RandomAccessCollection)
+    var rawIndex: Base.Index {
+        base.index(base.startIndex, offsetBy: Int(bitPattern: position))
+    }
+
+    // Pure typed arithmetic - no scalar conversions!
+    mutating func advance(by count: Index<Base.Element>.Count) {
+        position = position + count
+    }
+
+    var current: Base.Element? {
+        guard position < totalCount else { return nil }
+        return base[rawIndex]  // Single conversion point
+    }
+}
+```
+
+**Benefits**:
+- All arithmetic stays typed: `position + count`
+- `Int(bitPattern:)` conversion encapsulated in single `rawIndex` getter
+- No dual tracking needed
+
+**Cross-references**: See experiment `swift-primitives/Experiments/typed-index-boundary/`
+
+---
+
+### [IDX-006c] Index ↔ Count Conversions
+
+**Statement**: Convert between `Index<T>` and `Index<T>.Count` using initializers. Both directions are total because both represent non-negative values.
+
+```swift
+let position: Index<Int> = try Index(5)
+
+// Index → Count (total)
+let consumed: Index<Int>.Count = Index<Int>.Count(position)
+
+// Count → Index (total)
+let count: Index<Int>.Count = try Index<Int>.Count(10)
+let endIndex: Index<Int> = Index<Int>(count)
+```
+
+**Use case**: Computing remaining elements and bounds:
+```swift
+var totalCount: Index<Element>.Count { try! Index<Element>.Count(storage.count) }
+var consumedCount: Index<Element>.Count { Index<Element>.Count(position) }
+var checkpointRange: ClosedRange<Index<Element>> { .zero...Index<Element>(totalCount) }
+```
+
+---
+
+### [IDX-006d] Count Subtraction (Saturating)
+
+**Statement**: Use `.subtract.saturating()` for `Count - Count` operations. Direct `-` operator is not defined on Count.
+
+```swift
+let total: Index<Int>.Count = try Index<Int>.Count(10)
+let consumed: Index<Int>.Count = try Index<Int>.Count(3)
+
+// ✓ CORRECT: Property-based saturating subtraction
+let remaining = total.subtract.saturating(consumed)  // Count of 7
+
+// ❌ WRONG: No direct - operator on Count
+// let remaining = total - consumed  // Does not compile
+```
+
+**Rationale**: Subtraction on cardinals (non-negative quantities) could underflow. The property-based API makes the saturation behavior explicit.
+
+**Pattern in practice**:
+```swift
+public var count: Index<Element>.Count {
+    totalCount.subtract.saturating(Index<Element>.Count(position))
+}
+```
 
 ---
 
