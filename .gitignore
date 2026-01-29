@@ -56,3 +56,7 @@ Thumbs.db
 # ========== LOCAL OVERRIDES ==========
 # Package-specific rules below (preserved during sync)
 
+# Skills directory for package-specific skills
+!/Skills/
+!/Skills/**/*.md
+
