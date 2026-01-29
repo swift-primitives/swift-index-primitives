@@ -132,18 +132,18 @@ All arithmetic flows through from lower-level packages via Tagged extensions. Th
 
 **Context**: Understanding why `Offset<A> * Ratio<A, B>` produces `Offset<B>`, not `Offset<A>`.
 
-When you multiply `Index<UInt8>.Offset(2)` by `Ratio<UInt8, Bit>(8)`, the result is `Index<Bit>.Offset(16)`. The ratio doesn't just scale—it transforms the domain. The output offset lives in the `To` domain, not the `From` domain.
+When you multiply `Index<Memory>.Offset(2)` by `Ratio<UInt8, Bit>(8)`, the result is `Index<Bit>.Offset(16)`. The ratio doesn't just scale—it transforms the domain. The output offset lives in the `To` domain, not the `From` domain.
 
 This is mathematically correct. The ratio is a morphism from the UInt8-offset space to the Bit-offset space. Applying it to a UInt8-offset yields a Bit-offset. The type system encodes this category-theoretic structure.
 
 The domain transformation enables type inference through operator chains:
 
 ```swift
-let byteOffset: Index<UInt8>.Offset = ...
+let byteOffset: Index<Memory>.Offset = ...
 let bitOffset = byteOffset * .bitsPerByte  // Type inferred as Index<Bit>.Offset
 ```
 
-Swift infers that `.bitsPerByte` must be `Ratio<UInt8, Bit>` because the left operand is `Index<UInt8>.Offset` and the operator signature requires matching `From` domains. If you accidentally use the wrong ratio, compilation fails—affine geometry enforced by types.
+Swift infers that `.bitsPerByte` must be `Ratio<UInt8, Bit>` because the left operand is `Index<Memory>.Offset` and the operator signature requires matching `From` domains. If you accidentally use the wrong ratio, compilation fails—affine geometry enforced by types.
 
 **Applies to**: `Offset * Ratio` operators, domain transformation, type inference through operators.
 
@@ -155,18 +155,18 @@ Swift infers that `.bitsPerByte` must be `Ratio<UInt8, Bit>` because the left op
 
 **Context**: Understanding why `Offset<A> * Ratio<A, B>` produces `Offset<B>`, not `Offset<A>`.
 
-When you multiply `Index<UInt8>.Offset(2)` by `Ratio<UInt8, Bit>(8)`, the result is `Index<Bit>.Offset(16)`. The ratio doesn't just scale—it transforms the domain. The output offset lives in the `To` domain, not the `From` domain.
+When you multiply `Index<Memory>.Offset(2)` by `Ratio<UInt8, Bit>(8)`, the result is `Index<Bit>.Offset(16)`. The ratio doesn't just scale—it transforms the domain. The output offset lives in the `To` domain, not the `From` domain.
 
 This is mathematically correct. The ratio is a morphism from the UInt8-offset space to the Bit-offset space. Applying it to a UInt8-offset yields a Bit-offset. The type system encodes this category-theoretic structure.
 
 The domain transformation enables type inference through operator chains:
 
 ```swift
-let byteOffset: Index<UInt8>.Offset = ...
+let byteOffset: Index<Memory>.Offset = ...
 let bitOffset = byteOffset * .bitsPerByte  // Type inferred as Index<Bit>.Offset
 ```
 
-Swift infers that `.bitsPerByte` must be `Ratio<UInt8, Bit>` because the left operand is `Index<UInt8>.Offset` and the operator signature requires matching `From` domains. If you accidentally use the wrong ratio, compilation fails—affine geometry enforced by types.
+Swift infers that `.bitsPerByte` must be `Ratio<UInt8, Bit>` because the left operand is `Index<Memory>.Offset` and the operator signature requires matching `From` domains. If you accidentally use the wrong ratio, compilation fails—affine geometry enforced by types.
 
 **Applies to**: `Offset * Ratio` operators, domain transformation semantics, type-safe scaling.
 

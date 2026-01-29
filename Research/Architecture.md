@@ -476,7 +476,7 @@ extension Affine.Discrete {
     public struct Bounded<let N: Int>: Hashable, Comparable, Sendable {
         public let rawValue: Int
 
-        public static var count: Int { N }
+        public static var count: Cardinal { N }
 
         public init?(_ value: Int) {
             guard value >= 0, value < N else { return nil }
@@ -681,7 +681,7 @@ extension Index where Element: ~Copyable {
             self.position = bounded
         }
 
-        public static var count: Int { N }
+        public static var count: Cardinal { N }
     }
 }
 
