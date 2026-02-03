@@ -1,37 +1,53 @@
+// ===----------------------------------------------------------------------===//
 //
-//  Index+UnsafeMutablePointer.swift
-//  swift-index-primitives
+// This source file is part of the swift-primitives open source project
 //
-//  Created by Coen ten Thije Boonkkamp on 27/01/2026.
+// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-primitives project authors
+// Licensed under Apache License v2.0
 //
+// See LICENSE for license information
+//
+// ===----------------------------------------------------------------------===//
 
-// MARK: - UnsafeMutablePointer + Index Arithmetic
+// MARK: - UnsafeMutablePointer + Index<T>.Offset Arithmetic
+//
+// Affine arithmetic: pointer (point) + offset (vector) = pointer (point)
+// This is mathematically correct - we add a displacement to a position.
 
-/// Advances a mutable pointer by a typed index offset.
+/// Advances a mutable pointer by a typed element offset.
 @_transparent
 public func + <Pointee: ~Copyable>(
     lhs: UnsafeMutablePointer<Pointee>,
-    rhs: Index<Pointee>
+    rhs: Index<Pointee>.Offset
 ) -> UnsafeMutablePointer<Pointee> {
-    unsafe lhs + Int(bitPattern: rhs.position)
+    unsafe lhs.advanced(by: Int(rhs.rawValue.rawValue))
 }
 
-/// Advances a mutable pointer by a typed index offset.
+/// Advances a mutable pointer by a typed element offset.
 @_transparent
 public func + <Pointee: ~Copyable>(
-    lhs: Index<Pointee>,
+    lhs: Index<Pointee>.Offset,
     rhs: UnsafeMutablePointer<Pointee>
 ) -> UnsafeMutablePointer<Pointee> {
-    unsafe rhs + Int(bitPattern: lhs.position)
+    unsafe rhs.advanced(by: Int(lhs.rawValue.rawValue))
 }
 
-/// Subtracts a typed index offset from a mutable pointer.
+/// Retreats a mutable pointer by a typed element offset.
 @_transparent
 public func - <Pointee: ~Copyable>(
     lhs: UnsafeMutablePointer<Pointee>,
-    rhs: Index<Pointee>
+    rhs: Index<Pointee>.Offset
 ) -> UnsafeMutablePointer<Pointee> {
-    unsafe lhs - Int(bitPattern: rhs.position)
+    unsafe lhs.advanced(by: -Int(rhs.rawValue.rawValue))
+}
+
+/// Computes the typed element distance between two mutable pointers.
+@_transparent
+public func - <Pointee: ~Copyable>(
+    lhs: UnsafeMutablePointer<Pointee>,
+    rhs: UnsafeMutablePointer<Pointee>
+) -> Index<Pointee>.Offset {
+    Index<Pointee>.Offset(Affine.Discrete.Vector(unsafe rhs.distance(to: lhs)))
 }
 
 // MARK: - UnsafeMutablePointer Subscript
@@ -42,23 +58,41 @@ extension UnsafeMutablePointer where Pointee: ~Copyable {
     /// This subscript enables type-safe pointer access using `Index<Pointee>`:
     ///
     /// ```swift
-    /// (0..<count).forEach { i in
-    ///     body(elements[i])  // i is Index<Element>
+    /// (.zero..<count).forEach { idx in
+    ///     body(elements[idx])  // idx is Index<Element>
     /// }
     /// ```
     ///
     /// - Parameter index: A typed index into the pointer's memory.
     /// - Returns: The element at the specified index.
+    /// - Note: Converts index to offset from zero: `self + (index - .zero)`.
     @inlinable @inline(__always)
     public subscript(index: Index<Pointee>) -> Pointee {
         @_transparent
         unsafeAddress {
-            unsafe UnsafePointer(self + index)
+            // Affine: point + (point - origin) = point + vector
+            unsafe UnsafePointer(self + Index.Offset(__unchecked: (), index))
         }
         @_transparent
-        unsafeMutableAddress {
-            unsafe self + index
+        nonmutating unsafeMutableAddress {
+            // Affine: point + (point - origin) = point + vector
+            unsafe self + Index.Offset(__unchecked: (), index)
         }
+    }
+}
+
+// MARK: - UnsafeMutablePointer Allocation
+
+extension UnsafeMutablePointer {
+    /// Allocates uninitialized memory for the specified number of instances.
+    ///
+    /// - Parameter capacity: The typed count of instances to allocate.
+    /// - Returns: A pointer to the allocated memory.
+    @inlinable
+    public static func allocate(
+        capacity: Index_Primitives_Core.Index<Pointee>.Count
+    ) -> UnsafeMutablePointer {
+        Self.allocate(capacity: Int(bitPattern: capacity.count))
     }
 }
 

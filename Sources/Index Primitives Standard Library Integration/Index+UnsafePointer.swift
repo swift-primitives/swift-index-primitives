@@ -9,35 +9,45 @@
 //
 // ===----------------------------------------------------------------------===//
 
+// MARK: - UnsafePointer + Index<T>.Offset Arithmetic
+//
+// Affine arithmetic: pointer (point) + offset (vector) = pointer (point)
+// This is mathematically correct - we add a displacement to a position.
 
-
-// MARK: - UnsafePointer + Index Arithmetic
-
-/// Advances a pointer by a typed index offset.
+/// Advances a pointer by a typed element offset.
 @_transparent
 public func + <Pointee: ~Copyable>(
     lhs: UnsafePointer<Pointee>,
-    rhs: Index<Pointee>
+    rhs: Index<Pointee>.Offset
 ) -> UnsafePointer<Pointee> {
-    unsafe lhs + Int(bitPattern: rhs.position)
+    unsafe lhs.advanced(by: Int(rhs.rawValue.rawValue))
 }
 
-/// Advances a pointer by a typed index offset.
+/// Advances a pointer by a typed element offset.
 @_transparent
 public func + <Pointee: ~Copyable>(
-    lhs: Index<Pointee>,
+    lhs: Index<Pointee>.Offset,
     rhs: UnsafePointer<Pointee>
 ) -> UnsafePointer<Pointee> {
-    unsafe rhs + Int(bitPattern: lhs.position)
+    unsafe rhs.advanced(by: Int(lhs.rawValue.rawValue))
 }
 
-/// Subtracts a typed index offset from a pointer.
+/// Retreats a pointer by a typed element offset.
 @_transparent
 public func - <Pointee: ~Copyable>(
     lhs: UnsafePointer<Pointee>,
-    rhs: Index<Pointee>
+    rhs: Index<Pointee>.Offset
 ) -> UnsafePointer<Pointee> {
-    unsafe lhs - Int(bitPattern: rhs.position)
+    unsafe lhs.advanced(by: -Int(rhs.rawValue.rawValue))
+}
+
+/// Computes the typed element distance between two pointers.
+@_transparent
+public func - <Pointee: ~Copyable>(
+    lhs: UnsafePointer<Pointee>,
+    rhs: UnsafePointer<Pointee>
+) -> Index<Pointee>.Offset {
+    Index<Pointee>.Offset(Affine.Discrete.Vector(unsafe rhs.distance(to: lhs)))
 }
 
 // MARK: - UnsafePointer Subscript
@@ -48,18 +58,20 @@ extension UnsafePointer where Pointee: ~Copyable {
     /// This subscript enables type-safe pointer access using `Index<Pointee>`:
     ///
     /// ```swift
-    /// (0..<count).forEach { i in
-    ///     print(elements[i])  // i is Index<Element>
+    /// (.zero..<count).forEach { idx in
+    ///     print(elements[idx])  // idx is Index<Element>
     /// }
     /// ```
     ///
     /// - Parameter index: A typed index into the pointer's memory.
     /// - Returns: The element at the specified index.
+    /// - Note: Converts index to offset from zero: `self + (index - .zero)`.
     @inlinable @inline(__always)
     public subscript(index: Index<Pointee>) -> Pointee {
         @_transparent
         unsafeAddress {
-            unsafe self + index
+            // Affine: point + (point - origin) = point + vector
+            unsafe self + Index.Offset(__unchecked: (), index)
         }
     }
 }

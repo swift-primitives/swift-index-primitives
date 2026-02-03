@@ -44,3 +44,29 @@ extension Tagged where RawValue == Ordinal, Tag: ~Copyable {
     /// ```
     public typealias Offset = Tagged<Tag, Affine.Discrete.Vector>
 }
+
+// MARK: - Offset from Index Conversion
+
+extension Tagged where RawValue == Affine.Discrete.Vector, Tag: ~Copyable {
+    /// Creates an offset representing the distance from zero to the given index.
+    ///
+    /// This explicitly encodes the assumption that the offset is measured from
+    /// the zero position, making the origin clear at call sites.
+    ///
+    /// ## Affine Semantics
+    ///
+    /// An index (position) is a point in affine space, not a vector. It becomes
+    /// a vector only when measured relative to an origin. This initializer makes
+    /// that "from zero" assumption explicit:
+    ///
+    /// ```swift
+    /// let index = Index<Element>(5)
+    /// let offset = Index<Element>.Offset(fromZero: index)  // offset of 5 from origin
+    /// ```
+    ///
+    /// - Parameter index: The index to convert to an offset from zero.
+    @inlinable
+    public init(fromZero index: Tagged<Tag, Ordinal>) {
+        self.init(Affine.Discrete.Vector(Int(bitPattern: index.rawValue.rawValue)))
+    }
+}

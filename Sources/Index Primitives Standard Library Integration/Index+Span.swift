@@ -11,7 +11,7 @@
 
 // MARK: - Span + Index.Count
 
-extension Span where Element: ~Copyable {
+extension Swift.Span where Element: ~Copyable {
     /// Creates a span from a start address and typed count.
     ///
     /// - Parameters:
