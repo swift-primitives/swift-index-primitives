@@ -34,13 +34,6 @@ let package = Package(
             name: "Index Primitives",
             dependencies: [
                 .target(name: "Index Primitives Core"),
-                .target(name: "Index Primitives Standard Library Integration"),
-            ]
-        ),
-        .target(
-            name: "Index Primitives Standard Library Integration",
-            dependencies: [
-                .target(name: "Index Primitives Core"),
             ]
         ),
         .target(

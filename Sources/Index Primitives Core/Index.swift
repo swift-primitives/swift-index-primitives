@@ -36,12 +36,3 @@ public import Ordinal_Primitives
 /// let distance = newIdx - idx    // Offset of 3
 /// ```
 public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal>
-
-// MARK: - CustomStringConvertible
-
-extension Tagged: @retroactive CustomStringConvertible
-where RawValue == Ordinal, Tag: ~Copyable {
-    public var description: String {
-        "Index<\(Tag.self)>(\(rawValue.rawValue))"
-    }
-}

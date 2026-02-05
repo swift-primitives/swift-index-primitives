@@ -81,12 +81,6 @@ extension IndexTests.Unit {
         #expect(set.contains(b))
     }
 
-    @Test("description includes type and position")
-    func description() throws {
-        let index: Index<Int> = try Index(42)
-        #expect(index.description.contains("42"))
-    }
-
     @Test("different tag types are incompatible at compile time")
     func typeSafety() throws {
         let bitIndex: Index<Bit> = try Index(5)
