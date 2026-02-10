@@ -28,14 +28,14 @@ struct IndexTests {
 
 extension IndexTests.Unit {
     @Test("init with valid position")
-    func initWithValidPosition() throws {
-        let index: Index<Int> = try Index(5)
+    func initWithValidPosition() {
+        let index: Index<Int> = Index(__unchecked: (), Ordinal(UInt(5)))
         #expect(index.position == 5)
     }
 
     @Test("init with zero position")
-    func initWithZeroPosition() throws {
-        let index: Index<String> = try Index(0)
+    func initWithZeroPosition() {
+        let index: Index<String> = Index(__unchecked: (), Ordinal(UInt(0)))
         #expect(index.position == 0)
     }
 
@@ -46,24 +46,24 @@ extension IndexTests.Unit {
     }
 
     @Test("position property returns rawValue")
-    func positionProperty() throws {
-        let index: Index<Int> = try Index(10)
+    func positionProperty() {
+        let index: Index<Int> = Index(__unchecked: (), Ordinal(UInt(10)))
         #expect(index.position == index.rawValue)
     }
 
     @Test("indices of same type are equatable")
-    func equatable() throws {
-        let a: Index<Int> = try Index(5)
-        let b: Index<Int> = try Index(5)
-        let c: Index<Int> = try Index(6)
+    func equatable() {
+        let a: Index<Int> = Index(__unchecked: (), Ordinal(UInt(5)))
+        let b: Index<Int> = Index(__unchecked: (), Ordinal(UInt(5)))
+        let c: Index<Int> = Index(__unchecked: (), Ordinal(UInt(6)))
         #expect(a == b)
         #expect(a != c)
     }
 
     @Test("indices are comparable")
-    func comparable() throws {
-        let a: Index<Int> = try Index(3)
-        let b: Index<Int> = try Index(7)
+    func comparable() {
+        let a: Index<Int> = Index(__unchecked: (), Ordinal(UInt(3)))
+        let b: Index<Int> = Index(__unchecked: (), Ordinal(UInt(7)))
         #expect(a < b)
         #expect(b > a)
         #expect(a <= a)
@@ -71,9 +71,9 @@ extension IndexTests.Unit {
     }
 
     @Test("indices are hashable")
-    func hashable() throws {
-        let a: Index<Int> = try Index(5)
-        let b: Index<Int> = try Index(5)
+    func hashable() {
+        let a: Index<Int> = Index(__unchecked: (), Ordinal(UInt(5)))
+        let b: Index<Int> = Index(__unchecked: (), Ordinal(UInt(5)))
         #expect(a.hashValue == b.hashValue)
 
         var set: Set<Index<Int>> = []
@@ -82,9 +82,9 @@ extension IndexTests.Unit {
     }
 
     @Test("different tag types are incompatible at compile time")
-    func typeSafety() throws {
-        let bitIndex: Index<Bit> = try Index(5)
-        let byteIndex: Index<Byte> = try Index(5)
+    func typeSafety() {
+        let bitIndex: Index<Bit> = Index(__unchecked: (), Ordinal(UInt(5)))
+        let byteIndex: Index<Byte> = Index(__unchecked: (), Ordinal(UInt(5)))
 
         // Same position, different types - equality would be compile error
         #expect(bitIndex.position == byteIndex.position)
@@ -95,24 +95,10 @@ extension IndexTests.Unit {
 // MARK: - Edge Case Tests
 
 extension IndexTests.EdgeCase {
-    @Test("init with negative position throws error")
-    func negativePositionThrows() {
-        #expect(throws: Ordinal.Error.negativeSource(-1)) {
-            let _: Index<Int> = try Index(-1)
-        }
-    }
-
-    @Test("init with large negative position throws error")
-    func largeNegativePositionThrows() {
-        #expect(throws: Ordinal.Error.negativeSource(Int.min)) {
-            let _: Index<Int> = try Index(Int.min)
-        }
-    }
-
     @Test("init with maximum Int position succeeds")
-    func maxIntPosition() throws {
-        let index: Index<Int> = try Index(Int.max)
-        let expected: Index<Int> = try Index(Int.max)
+    func maxIntPosition() {
+        let index: Index<Int> = Index(__unchecked: (), Ordinal(UInt(Int.max)))
+        let expected: Index<Int> = Index(__unchecked: (), Ordinal(UInt(Int.max)))
         #expect(index == expected)
     }
 

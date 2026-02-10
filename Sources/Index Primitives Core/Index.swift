@@ -20,8 +20,8 @@ public import Ordinal_Primitives
 /// ## Type Safety
 ///
 /// ```swift
-/// let bitIndex: Index<Bit> = try Index(5)
-/// let byteIndex: Index<Byte> = try Index(5)
+/// let bitIndex: Index<Bit> = Index(__unchecked: (), Ordinal(UInt(5)))
+/// let byteIndex: Index<Byte> = Index(__unchecked: (), Ordinal(UInt(5)))
 /// // bitIndex == byteIndex  // Compile error - different types
 /// ```
 ///
@@ -30,7 +30,7 @@ public import Ordinal_Primitives
 /// Index supports affine arithmetic with `Index<Element>.Offset`:
 ///
 /// ```swift
-/// let idx: Index<Bit> = try Index(5)
+/// let idx: Index<Bit> = Index(__unchecked: (), Ordinal(UInt(5)))
 /// let offset = Index<Bit>.Offset(3)
 /// let newIdx = try idx + offset  // Index<Bit> at position 8
 /// let distance = newIdx - idx    // Offset of 3
