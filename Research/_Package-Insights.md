@@ -9,11 +9,6 @@ applies_to: [swift-index-primitives]
 normative: false
 ---
 -->
-
-@Metadata {
-    @TitleHeading("Index Primitives")
-}
-
 Design decisions, implementation patterns, and lessons learned specific to this package.
 
 ## Overview
@@ -203,10 +198,8 @@ The arithmetic operators now live in:
 
 ---
 
-## Topics
+## Related
 
-### Related Documents
-
-- <doc:Index>
-- <doc:Index-Count>
-- <doc:Index-Offset>
+- Index
+- Index-Count
+- Index-Offset
