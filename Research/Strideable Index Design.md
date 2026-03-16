@@ -1,4 +1,11 @@
 # Strideable Conformance for Phantom-Typed Index and Count
+<!--
+---
+version: 1.0.0
+last_updated: 2026-01-28
+status: DECISION
+---
+-->
 
 **Abstract.** This paper examines the design considerations for adding `Strideable` conformance to phantom-typed index types in Swift. We analyze the semantic model distinguishing positions (Index) from magnitudes (Count), explore why `Strideable` is appropriate for positions but not magnitudes, and document the fundamental tension between Swift's iteration infrastructure and move-only (`~Copyable`) types. We conclude that while the semantic model is sound, practical implementation requires either constraining iteration to `Copyable` phantom tags or adopting raw-value iteration patterns for move-only contexts.
 
