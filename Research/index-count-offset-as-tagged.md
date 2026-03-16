@@ -3,7 +3,7 @@
 <!--
 ---
 title: Index.Count and Index.Offset as Tagged Types
-status: INVESTIGATING
+status: IN_PROGRESS
 created: 2026-01-27
 package: swift-index-primitives
 affects: [swift-index-primitives, swift-range-primitives, swift-pointer-primitives]
