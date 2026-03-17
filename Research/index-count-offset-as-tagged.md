@@ -3,7 +3,8 @@
 <!--
 ---
 title: Index.Count and Index.Offset as Tagged Types
-status: IN_PROGRESS
+status: DECISION
+last_updated: 2026-03-16
 created: 2026-01-27
 package: swift-index-primitives
 affects: [swift-index-primitives, swift-range-primitives, swift-pointer-primitives]
@@ -204,6 +205,10 @@ extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
 1. Should the `count` property be deprecated in favor of `rawValue`?
 2. Should arithmetic operators remain on the extensions or be generalized to Tagged?
 3. Are there edge cases where nested struct semantics differ from Tagged semantics?
+
+## Outcome
+
+**DECISION** (2026-03-16): Option 3 (Hybrid) chosen — restructure `Index.Count` and `Index.Offset` as Tagged typealiases with extension methods preserving the current API. Prototype validated (12/12 tests pass).
 
 ## Status
 
