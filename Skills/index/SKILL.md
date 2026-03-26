@@ -13,6 +13,8 @@ requires:
 applies_to:
   - swift-index-primitives
   - swift-primitives
+
+last_reviewed: 2026-03-26
 ---
 
 # Index Primitives
