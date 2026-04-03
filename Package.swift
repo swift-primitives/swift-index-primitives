@@ -17,6 +17,10 @@ let package = Package(
             targets: ["Index Primitives"]
         ),
         .library(
+            name: "Index Primitives Core",
+            targets: ["Index Primitives Core"]
+        ),
+        .library(
             name: "Index Primitives Test Support",
             targets: ["Index Primitives Test Support"]
         ),
