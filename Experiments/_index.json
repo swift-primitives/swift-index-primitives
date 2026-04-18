@@ -1,0 +1,70 @@
+{
+  "$schema": "https://swift-institute.org/schemas/experiments-index-v1.json",
+  "schemaVersion": "1.0.0",
+  "generatedAt": "2026-04-18",
+  "title": "Experiments Index",
+  "blurb": "",
+  "scope": "swift-index-primitives (swift-primitives)",
+  "experiments": [
+    {
+      "directory": "api-totality-design",
+      "displayName": "api-totality-design",
+      "purpose": "Systematically explore totality (zero crashes) in Index_Primitives",
+      "date": "2026-01-22",
+      "toolchain": "Swift 6.2",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "hash-index-typed-positions",
+      "displayName": "hash-index-typed-positions",
+      "purpose": "Verify Hash.Index with typed Index\\<Element\\> positions",
+      "date": "2026-01-22",
+      "toolchain": "Swift 6.0",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "index-offset-arithmetic",
+      "displayName": "index-offset-arithmetic",
+      "purpose": "Verify affine pointer arithmetic with Index\\<T\\>.Offset",
+      "date": "2026-02-02",
+      "toolchain": "Swift 6.2",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "index-totality",
+      "displayName": "index-totality",
+      "purpose": "Index totality with Property.View as protocol requirement",
+      "date": "2026-01-22",
+      "toolchain": "Swift 6.2",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "operator-forwarding",
+      "displayName": "operator-forwarding",
+      "purpose": "Best approach for forwarding operators through Tagged phantom types",
+      "date": "2026-01-28",
+      "toolchain": "Swift 6.2",
+      "status": "PENDING",
+      "statusDetail": null,
+      "statusRaw": "PENDING",
+      "supersededBy": null,
+      "crossRefs": []
+    }
+  ]
+}
