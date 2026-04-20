@@ -52,33 +52,33 @@ extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
 @Suite("Index.Count Tagged Experiment")
 struct IndexCountTaggedExperiment {
 
-    @Test("Construction from UInt")
-    func constructionUInt() {
+    @Test
+    func `Construction from UInt`() {
         let count = ExperimentalCount<Int>(experimentUInt: 42)
         #expect(count.rawValue == 42)
     }
 
-    @Test("Construction from Int")
-    func constructionInt() throws {
+    @Test
+    func `Construction from Int`() throws {
         let count = try ExperimentalCount<Int>(experimentInt: 42)
         #expect(count.rawValue == 42)
     }
 
-    @Test("Construction from negative Int throws")
-    func constructionNegativeThrows() {
+    @Test
+    func `Construction from negative Int throws`() {
         #expect(throws: Cardinal.Error.self) {
             _ = try ExperimentalCount<Int>(experimentInt: -1)
         }
     }
 
-    @Test("Static constants")
-    func staticConstants() {
+    @Test
+    func `Static constants`() {
         #expect(ExperimentalCount<Int>.experimentZero.rawValue == 0)
         #expect(ExperimentalCount<Int>.experimentOne.rawValue == 1)
     }
 
-    @Test("Equality (free from Tagged)")
-    func equality() {
+    @Test
+    func `Equality (free from Tagged)`() {
         let a = ExperimentalCount<Int>(experimentUInt: 5)
         let b = ExperimentalCount<Int>(experimentUInt: 5)
         let c = ExperimentalCount<Int>(experimentUInt: 10)
@@ -87,8 +87,8 @@ struct IndexCountTaggedExperiment {
         #expect(a != c)
     }
 
-    @Test("Comparison (free from Tagged)")
-    func comparison() {
+    @Test
+    func `Comparison (free from Tagged)`() {
         let small = ExperimentalCount<Int>(experimentUInt: 5)
         let large = ExperimentalCount<Int>(experimentUInt: 10)
 
@@ -98,8 +98,8 @@ struct IndexCountTaggedExperiment {
         #expect(small >= small)
     }
 
-    @Test("Hashable (free from Tagged)")
-    func hashable() {
+    @Test
+    func `Hashable (free from Tagged)`() {
         let a = ExperimentalCount<Int>(experimentUInt: 42)
         let b = ExperimentalCount<Int>(experimentUInt: 42)
 
@@ -110,8 +110,8 @@ struct IndexCountTaggedExperiment {
         #expect(set.contains(b))
     }
 
-    @Test("Arithmetic")
-    func arithmetic() {
+    @Test
+    func `Arithmetic`() {
         let a = ExperimentalCount<Int>(experimentUInt: 5)
         let b = ExperimentalCount<Int>(experimentUInt: 10)
 
@@ -119,8 +119,8 @@ struct IndexCountTaggedExperiment {
         #expect(sum.rawValue == 15)
     }
 
-    @Test("retag() - THE KEY BENEFIT")
-    func retag() {
+    @Test
+    func `retag() - THE KEY BENEFIT`() {
         let intCount = ExperimentalCount<Int>(experimentUInt: 42)
 
         // This is what we gain: retag just works!
@@ -129,8 +129,8 @@ struct IndexCountTaggedExperiment {
         #expect(stringCount.rawValue == 42)
     }
 
-    @Test("map() - transform raw value")
-    func map() {
+    @Test
+    func `map() - transform raw value`() {
         let count = ExperimentalCount<Int>(experimentUInt: 5)
 
         // Transform the underlying Cardinal
@@ -139,8 +139,8 @@ struct IndexCountTaggedExperiment {
         #expect(doubled.rawValue == 10)
     }
 
-    @Test("Cross-domain conversion via retag")
-    func crossDomainConversion() {
+    @Test
+    func `Cross-domain conversion via retag`() {
         let sourceCount = ExperimentalCount<Int>(experimentUInt: 100)
 
         // Old pattern required manual init:
@@ -152,8 +152,8 @@ struct IndexCountTaggedExperiment {
         #expect(destCount.rawValue == 100)
     }
 
-    @Test("Phantom type safety preserved")
-    func phantomTypeSafety() {
+    @Test
+    func `Phantom type safety preserved`() {
         let intCount = ExperimentalCount<Int>(experimentUInt: 5)
         let stringCount = ExperimentalCount<String>(experimentUInt: 5)
 

@@ -27,26 +27,26 @@ struct IndexOffsetTests {
 // MARK: - Unit Tests
 
 extension IndexOffsetTests.Unit {
-    @Test("init with positive value")
-    func initPositive() {
+    @Test
+    func `init with positive value`() {
         let offset: Index<IntTag>.Offset = 5
         #expect(offset == 5)
     }
 
-    @Test("init with negative value")
-    func initNegative() {
+    @Test
+    func `init with negative value`() {
         let offset: Index<IntTag>.Offset = -3
         #expect(offset == -3)
     }
 
-    @Test("init with zero")
-    func initZero() {
+    @Test
+    func `init with zero`() {
         let offset: Index<IntTag>.Offset = 0
         #expect(offset == 0)
     }
 
-    @Test("ExpressibleByIntegerLiteral")
-    func integerLiteral() {
+    @Test
+    func `ExpressibleByIntegerLiteral`() {
         let offset: Index<IntTag>.Offset = 42
         #expect(offset == 42)
 
@@ -54,8 +54,8 @@ extension IndexOffsetTests.Unit {
         #expect(negative == -10)
     }
 
-    @Test("offsets are equatable")
-    func equatable() {
+    @Test
+    func `offsets are equatable`() {
         let a: Index<IntTag>.Offset = 5
         let b: Index<IntTag>.Offset = 5
         let c: Index<IntTag>.Offset = -5
@@ -63,8 +63,8 @@ extension IndexOffsetTests.Unit {
         #expect(a != c)
     }
 
-    @Test("offsets are comparable")
-    func comparable() {
+    @Test
+    func `offsets are comparable`() {
         let negative: Index<IntTag>.Offset = -10
         let zero: Index<IntTag>.Offset = 0
         let positive: Index<IntTag>.Offset = 10
@@ -75,8 +75,8 @@ extension IndexOffsetTests.Unit {
         #expect(positive > zero)
     }
 
-    @Test("offsets are hashable")
-    func hashable() {
+    @Test
+    func `offsets are hashable`() {
         let a: Index<IntTag>.Offset = 5
         let b: Index<IntTag>.Offset = 5
         #expect(a.hashValue == b.hashValue)
@@ -90,14 +90,14 @@ extension IndexOffsetTests.Unit {
 // MARK: - Edge Case Tests
 
 extension IndexOffsetTests.EdgeCase {
-    @Test("maximum Int offset")
-    func maxIntOffset() {
+    @Test
+    func `maximum Int offset`() {
         let offset = Index<IntTag>.Offset(Int.max)
         #expect(offset.vector.rawValue == Int.max)
     }
 
-    @Test("minimum Int offset")
-    func minIntOffset() {
+    @Test
+    func `minimum Int offset`() {
         let offset = Index<IntTag>.Offset(Int.min)
         #expect(offset.vector.rawValue == Int.min)
     }
