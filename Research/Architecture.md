@@ -85,7 +85,7 @@ Per user directive, the following constraints apply:
 
 | Package | Tier | Dependencies | Main Types |
 |---------|------|--------------|------------|
-| `swift-identity-primitives` | 0 | None | `Tagged<Tag, RawValue>` |
+| `swift-tagged-primitives` | 0 | None | `Tagged<Tag, RawValue>` |
 | `swift-ordinal-primitives` | 0 | None | `Ordinal`, `Ordinal.Offset` |
 | `swift-finite-primitives` | 1 | ordinal | `Finite.Ordinal`, `Finite.Bounded` |
 | `swift-dimension-primitives` | 4 | identity, numeric, formatting, algebra, finite | `Coordinate.*`, `Displacement.*`, `Extent.*` |
@@ -99,7 +99,7 @@ Per user directive, the following constraints apply:
 
 ### 2.2 Type Analysis
 
-#### `swift-identity-primitives`
+#### `swift-tagged-primitives`
 
 ```swift
 public struct Tagged<Tag: ~Copyable, RawValue> {
@@ -323,7 +323,7 @@ Affine                          // Domain: affine space concepts
 
 ```
 TIER 0 (Atomic - No Dependencies)
-├── swift-identity-primitives
+├── swift-tagged-primitives
 │   └── Tagged<Tag, RawValue>
 │
 └── swift-affine-primitives  ← RESTRUCTURED
@@ -574,7 +574,7 @@ public func - <let N: Int>(
 ### 7.2 `swift-index-primitives` (Simplified)
 
 **Tier**: 1
-**Dependencies**: `swift-identity-primitives`, `swift-affine-primitives`
+**Dependencies**: `swift-tagged-primitives`, `swift-affine-primitives`
 
 **File Structure**:
 ```
@@ -589,7 +589,7 @@ Sources/Index Primitives/
 
 ```swift
 // Index.swift
-import Identity_Primitives
+import Tagged_Primitives
 import Affine_Primitives
 
 /// A phantom-typed index for type-safe collection access.
@@ -909,7 +909,7 @@ The key insight is recognizing that "affine space" is a mathematical concept wit
 
 | Package | Tier | Dependencies |
 |---------|------|--------------|
-| `swift-identity-primitives` | 0 | — |
+| `swift-tagged-primitives` | 0 | — |
 | `swift-affine-primitives` | 0 | — |
 | `swift-index-primitives` | 1 | identity, affine |
 | `swift-finite-primitives` | 1 | affine |

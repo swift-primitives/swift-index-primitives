@@ -327,7 +327,7 @@ import Index_Primitives_Test_Support  // ← Enables literals
 **Re-export chain**:
 ```
 Index_Primitives_Test_Support
-  @_exported import Identity_Primitives_Test_Support  // Literal conformances
+  @_exported import Tagged_Primitives_Test_Support  // Literal conformances
   @_exported import Ordinal_Primitives_Test_Support
   @_exported import Cardinal_Primitives_Test_Support
   @_exported import Affine_Primitives_Test_Support

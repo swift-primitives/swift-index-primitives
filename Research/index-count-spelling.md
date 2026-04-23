@@ -249,7 +249,7 @@ Option D: All three are nested in `Index<T>`, but position becomes `Index<T>.Pos
 | C | No new imports, but protocol must be modified |
 | D | `Index_Primitives` — same as A |
 
-Option B creates a placement problem. `Count<T>` is semantically "phantom-tagged cardinal," so it could live in `Cardinal_Primitives` or `Identity_Primitives`. But users would expect to find it alongside `Index<T>` in `Index_Primitives`. Wherever it goes, discoverability suffers.
+Option B creates a placement problem. `Count<T>` is semantically "phantom-tagged cardinal," so it could live in `Cardinal_Primitives` or `Tagged_Primitives`. But users would expect to find it alongside `Index<T>` in `Index_Primitives`. Wherever it goes, discoverability suffers.
 
 **Verdict**: A = D > C > B.
 

@@ -8,7 +8,7 @@
 // ===----------------------------------------------------------------------===//
 
 import Cardinal_Primitives
-@_spi(Internal) import Identity_Primitives
+@_spi(Internal) import Tagged_Primitives
 
 // MARK: - Type Definition (replaces nested struct)
 

@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Ordinal_Primitives
-@_spi(Internal) public import Identity_Primitives
+@_spi(Internal) public import Tagged_Primitives
 
 /// A phantom-typed index for type-safe collection access.
 ///

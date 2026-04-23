@@ -243,6 +243,6 @@ Prototype file: `Tests/Index Primitives Tests/Index.Count.Tagged.Experiment.swif
 
 ## Related Documents
 
-- [Tagged.swift](/Users/coen/Developer/swift-primitives/swift-identity-primitives/Sources/Identity Primitives/Tagged.swift) - retag/map definitions
+- [Tagged.swift](/Users/coen/Developer/swift-primitives/swift-tagged-primitives/Sources/Tagged Primitives/Tagged.swift) - retag/map definitions
 - [Index.Count.swift](/Users/coen/Developer/swift-primitives/swift-index-primitives/Sources/Index Primitives/Index.Count.swift) - current implementation
 - [Index.Offset.swift](/Users/coen/Developer/swift-primitives/swift-index-primitives/Sources/Index Primitives/Index.Offset.swift) - current implementation

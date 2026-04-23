@@ -5,5 +5,5 @@
 @_exported public import Cardinal_Primitives
 @_exported public import Affine_Primitives
 @_exported public import Comparison_Primitives
-@_exported public import Identity_Primitives
-@_exported public import Identity_Primitives
+@_exported public import Tagged_Primitives
+@_exported public import Tagged_Primitives
