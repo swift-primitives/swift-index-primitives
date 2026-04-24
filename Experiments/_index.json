@@ -65,6 +65,28 @@
       "statusRaw": "PENDING",
       "supersededBy": null,
       "crossRefs": []
+    },
+    {
+      "directory": "bounded-index-preconditions",
+      "purpose": "Eliminating preconditions via typed indices",
+      "date": "2026-01-22",
+      "toolchain": "Swift 6.2",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
+    },
+    {
+      "directory": "typed-index-boundary",
+      "purpose": "Best-of-both-worlds for typed index arithmetic at stdlib boundary",
+      "date": "2026-01-29",
+      "toolchain": "Swift 6.2",
+      "status": "CONFIRMED",
+      "statusDetail": null,
+      "statusRaw": "CONFIRMED",
+      "supersededBy": null,
+      "crossRefs": []
     }
   ]
 }
