@@ -6,8 +6,6 @@ A phantom-typed index primitive — `Index<Element>`, a type-safe position into 
 
 `Index<Element>` distinguishes "an index into bits" from "an index into bytes" *at compile time*. Mixing the two — accidentally subscripting a byte buffer with a bit index — becomes a type error rather than a silent off-by-one bug.
 
-This package is the root of **Story 2 of the data-structures cohort** (`data-structures-launch-2026`): seven packages introducing typed indexing and sequences — order, **index**, sequence, collection, input, cyclic, vector. Story 1 (cardinal, ordinal, affine) shipped 2026-05-12.
-
 ---
 
 ## Quick Start
@@ -60,18 +58,6 @@ Requires Swift 6.3.1 and macOS 26 / iOS 26 / tvOS 26 / watchOS 26 / visionOS 26 
 
 ---
 
-## Why a separate package?
-
-`Index<Element>` is a one-line typealias — `public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal>` — but it earns its own package for two reasons.
-
-**Type-namespace anchor.** `Index<Element>` is a stable name consumers refer to across upstream churn. When `swift-tagged-primitives` renamed `.rawValue` to `.underlying` in 2026-05 the migration through this package was mechanical because the entire package is one typealias; downstream call sites kept using `Index<Bit>`, `Index<Byte>` unchanged. A standalone package gives the name a home so downstream code does not couple to whichever upstream module currently defines the underlying machinery.
-
-**Future surface point.** Index-specific surface — `Strideable` conformance, `RandomAccessCollection` adapters, bridging code to `swift-input-primitives` — accumulates on `Index<Element>` rather than scattering across `swift-tagged-primitives` or `swift-ordinal-primitives`. Today the typealias is the whole package; tomorrow the typealias is the seed and the extensions live next to it.
-
-The five direct dependencies (ordinal, cardinal, affine, comparison, tagged) are honest: removing any of them breaks `Tagged<Element, Ordinal>` itself or the affine arithmetic surface (`+ Offset`, `- Index`). The package re-exports them so a single `import Index_Primitives` brings the full typed-indexing surface into scope.
-
----
-
 ## Architecture
 
 Three library products covering the typealias, its umbrella re-exports, and a Test Support target.
@@ -96,13 +82,11 @@ This is the design that lets consumers reach for tag types from move-only contex
 
 ---
 
-## Why a typealias, not a struct?
+## Tagged composition
 
-A `public struct Index<Element>` with `let position: Ordinal` would give a nominal type with its own ABI surface and extension namespace. The package ships a typealias to `Tagged<Element, Ordinal>` instead because the alternative is denser, not lighter.
+`Index<Element>` is `Tagged<Element, Ordinal>` at the type-checker level. Every extension declared on `Tagged<Tag, Ordinal>` — anywhere in the dep graph — is automatically visible on `Index<Element>`, so the typed-indexing surface composes from one source of truth without per-typealias bridging.
 
-Every extension declared on `Tagged<Tag, Ordinal>` — anywhere in the dep graph — is automatically visible on `Index<Element>`. The cohort's typed-indexing narrative composes from one source of truth (`Tagged<Tag, Underlying>`) without rewriting extension code per typealias. A nominal struct would require manual bridging for each `Tagged`-flavored extension; the typealias gets the bridging for free.
-
-The trade-off is intentional: source-level identity (`Index<Element>` and `Tagged<Element, Ordinal>` are interchangeable at type-check time) in exchange for cost-free composition with the rest of the Tagged ecosystem. The `Research/Strideable Index Design.md` and `Research/index-count-spelling.md` design docs spell out the comparison against the struct alternative.
+The two forms are interchangeable at type-check time: code that names `Tagged<Element, Ordinal>` directly continues to compose with code that names `Index<Element>`.
 
 ---
 
@@ -126,25 +110,21 @@ If a call site can statically prove the bounds are satisfied — typically becau
 |----------|--------|
 | macOS 26 | Full support |
 | iOS / tvOS / watchOS / visionOS | Supported |
-| Linux | Full support (post-flip CI matrix) |
-| Windows | Full support (post-flip CI matrix) |
-| Swift Embedded | Heuristic-supported (no Foundation, no concurrency surface) — verified through upstream Tagged / Ordinal Embedded coverage; first-party Embedded matrix runs post-flip |
+| Linux | Full support |
+| Windows | Full support |
+| Swift Embedded | Supported (Wasm SDK + Swift 6.4-dev nightly CI matrix passes) |
 
 ---
 
 ## Related Packages
 
-Direct dependencies (all already-public):
+Direct dependencies:
 
 - [swift-ordinal-primitives](https://github.com/swift-primitives/swift-ordinal-primitives) — `Ordinal`, the non-negative position the `Index<Element>` typealias wraps.
 - [swift-cardinal-primitives](https://github.com/swift-primitives/swift-cardinal-primitives) — `Cardinal`, the non-negative count `Index<Element>.Count` builds on.
 - [swift-affine-primitives](https://github.com/swift-primitives/swift-affine-primitives) — `Affine.Discrete.Vector`, the signed displacement `Index<Element>.Offset` builds on.
 - [swift-tagged-primitives](https://github.com/swift-primitives/swift-tagged-primitives) — `Tagged<Tag, Underlying>`, the phantom-tagging machinery `Index<Element>` is a typealias for.
 - [swift-comparison-primitives](https://github.com/swift-primitives/swift-comparison-primitives) — `Comparison.Protocol`, the `Comparable`-shape conformance `Ordinal` exposes.
-
-Cohort siblings (Story 2 — Typed indexing and sequences):
-
-- order, **index**, sequence, collection, input, cyclic, vector — see [`data-structures-launch-2026`](https://github.com/swift-institute) for the cohort narrative.
 
 ---
 

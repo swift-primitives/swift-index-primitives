@@ -22,17 +22,11 @@ let byteIndex: Index<Byte> = Index(_unchecked: Ordinal(UInt(5)))
 bitIndex.position            // 5 — the underlying Ordinal
 ```
 
-## Why a typealias, not a struct?
+## Tagged composition
 
-A nominal `public struct Index<Element>` with its own `position: Ordinal` storage would give a fresh type identity and a fresh extension namespace. The package ships the typealias instead because the alternative is denser, not lighter:
+`Index<Element>` IS `Tagged<Element, Ordinal>` at every layer. Every extension `swift-tagged-primitives` ships on `Tagged<Tag, Ordinal>` is automatically visible on `Index<Element>`, so the typed-indexing surface composes from one source of truth without per-typealias bridging code.
 
-**(A) Nominal struct.** Each extension on `Tagged<Tag, Ordinal>` would need a manual bridging extension on `Index<Element>` — `comparison`, `arithmetic`, `equatability`, `hashability`, every accessor. New `Tagged`-flavored extensions added in `swift-tagged-primitives` would require a follow-up here. ABI surface duplicated; source identity gained; composition cost paid forever.
-
-**(B) Wrapper protocol.** `Index` as a protocol with associated `Element`, conformed-to by `Tagged<Element, Ordinal>`. Equally heavy: every consumer needs `some Index<Bit>` instead of `Index<Bit>`, and the protocol has no method surface of its own.
-
-**(C) Typealias** (the choice). `Index<Element>` IS `Tagged<Element, Ordinal>` at every layer. Every extension `swift-tagged-primitives` ships on `Tagged<Tag, Ordinal>` is automatically visible on `Index<Element>`. The cohort's typed-indexing narrative composes from one source of truth without per-typealias bridging code.
-
-The trade-off is intentional: source-level identity (consumers may write `Tagged<Element, Ordinal>` where `Index<Element>` is expected) in exchange for cost-free composition with the rest of the Tagged ecosystem. The choice is recorded as `Research/Strideable Index Design.md` (DECISION) and `Research/index-count-spelling.md` (RECOMMENDATION).
+The two forms are interchangeable at type-check time: consumers may write `Tagged<Element, Ordinal>` where `Index<Element>` is expected.
 
 ## Construction
 
@@ -75,4 +69,4 @@ For call sites that can statically prove bounds, the convention is `try!` with a
 
 `Index<Element>` inherits every protocol conformance defined on `Tagged<Element, Ordinal>` — `Equatable`, `Comparable`, `Hashable`, `Sendable` (when the underlying parameters conform). No conformance is owned by this package; the typealias is purely a type-system disambiguation device.
 
-See <doc:Phantom-Type-Tags> for the cost model of the `Element: ~Copyable` constraint, <doc:Tag-Convention> for the declaration patterns for tag types, and <doc:Architecture> for the package's place in the data-structures cohort.
+See <doc:Phantom-Type-Tags> for the cost model of the `Element: ~Copyable` constraint, <doc:Tag-Convention> for the declaration patterns for tag types, and <doc:Architecture> for the package's product layout and dependency closure.

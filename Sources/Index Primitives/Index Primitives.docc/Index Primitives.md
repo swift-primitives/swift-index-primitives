@@ -13,7 +13,7 @@ A phantom-typed index primitive — `Index<Element>`, a type-safe position into 
 
 The phantom-tag parameter (`Element`) never appears at runtime, is never stored, and never copies. The runtime layout of `Index<Element>` is the same as `Ordinal`, which is the same as `UInt`; the phantom exists purely so the compiler can distinguish `Index<Bit>` from `Index<Byte>` at type-check time. `Element: ~Copyable` widens the set of types consumers can use as tags without imposing non-copyability on the `Index<Element>` value itself.
 
-Index is the root of **Story 2 of the data-structures cohort**: seven packages introducing typed indexing and sequences — order, **index**, sequence, collection, input, cyclic, vector. Story 1 (cardinal, ordinal, affine) shipped 2026-05-12. The five direct dependencies (ordinal, cardinal, affine, comparison, tagged) are honest: removing any of them breaks `Tagged<Element, Ordinal>` itself or the affine arithmetic surface (`+ Offset`, `- Index`).
+The five direct dependencies (ordinal, cardinal, affine, comparison, tagged) are load-bearing: removing any of them breaks `Tagged<Element, Ordinal>` itself or the affine arithmetic surface (`+ Offset`, `- Index`).
 
 ## Topics
 
