@@ -1,0 +1,13 @@
+# .github/metadata.yaml
+# Triaged by AI-assisted bulk pass (2026-04-29).
+# Updated 2026-05-13 — Wave 1 readiness pass, topic expansion per [GH-REPO-060] / [P1-M-1].
+description: "Index types for Swift — phantom-typed positions for type-safe collection access."
+topics:
+  - primitives
+  - index
+  - type-safety
+  - data-structures
+  - phantom-types
+homepage: "https://swift-institute.org"
+readme:
+  family: E
