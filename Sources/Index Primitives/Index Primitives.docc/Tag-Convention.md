@@ -40,7 +40,7 @@ A `public` tag does not weaken type safety — `Index<Bit>` and `Index<Byte>` re
 
 ## Reusing tags across `Index`, `Offset`, `Count`
 
-A single tag type can serve as the phantom for `Index`, `Offset`, and `Count` simultaneously — that's the design intent. The cohort's typed-indexing surface uses the same tag across the three roles:
+A single tag type can serve as the phantom for `Index`, `Offset`, and `Count` simultaneously — that's the design intent. The typed-indexing surface uses the same tag across the three roles:
 
 ```swift
 private enum BitBuffer {}
