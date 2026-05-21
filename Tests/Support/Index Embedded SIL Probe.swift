@@ -11,6 +11,13 @@
 
 public import Index_Primitives
 
+// Guard the probe out of Embedded builds on Swift 6.3.x where the documented
+// MandatoryPerformanceOptimizations crash manifests; restore automatically on
+// Swift 6.4+ where the upstream bug is fixed (verified 6.4-dev nightly Embedded
+// clean per `swift-institute/Issues/swift-issue-embedded-wasm-mandatory-perf-crash/
+// INVESTIGATION-ARC.md`). [PKG-BUILD-007]
+#if !hasFeature(Embedded) || compiler(>=6.4)
+
 /// Phantom tag for the cross-module SIL probe below.
 public enum _IndexEmbeddedSILProbeTag {}
 
@@ -21,14 +28,15 @@ public enum _IndexEmbeddedSILProbeTag {}
 /// downstream consumer module compiled under Embedded).
 ///
 /// The arithmetic `Index<T>.zero + Index<T>.Count.zero` exercises the
-/// operator at a cross-module call site. When the upstream workaround
-/// in `swift-ordinal-primitives` (let-binding restructure of the body)
-/// is regressed, this probe surfaces the crash in this package's own
-/// Embedded Wasm SDK CI job — *before* it manifests in downstream
-/// consumers (cyclic, vector, array, etc.).
+/// operator at a cross-module call site. On Swift 6.4+ this probe is
+/// active under Embedded and validates that the upstream fix holds; on
+/// Swift 6.3.x the probe is guarded out of Embedded only — it still runs
+/// on macOS / Linux / Windows / non-Embedded toolchains.
 ///
 /// Tracking: `swift-institute/Issues/swift-issue-embedded-wasm-mandatory-perf-crash/`.
 @inlinable
 public func _indexEmbeddedSILCrashRegressionProbe() {
     let _: Index<_IndexEmbeddedSILProbeTag> = .zero + .zero
 }
+
+#endif
