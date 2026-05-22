@@ -12,14 +12,13 @@ let package = Package(
         .visionOS(.v26)
     ],
     products: [
+        // MARK: - Umbrella
         .library(
             name: "Index Primitives",
             targets: ["Index Primitives"]
         ),
-        .library(
-            name: "Index Primitives Core",
-            targets: ["Index Primitives Core"]
-        ),
+
+        // MARK: - Test Support
         .library(
             name: "Index Primitives Test Support",
             targets: ["Index Primitives Test Support"]
@@ -33,14 +32,9 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
     ],
     targets: [
+        // MARK: - Umbrella (consolidated per [MOD-031]: no separate Core target)
         .target(
             name: "Index Primitives",
-            dependencies: [
-                .target(name: "Index Primitives Core"),
-            ]
-        ),
-        .target(
-            name: "Index Primitives Core",
             dependencies: [
                 .product(name: "Ordinal Primitives", package: "swift-ordinal-primitives"),
                 .product(name: "Cardinal Primitives", package: "swift-cardinal-primitives"),
@@ -49,6 +43,8 @@ let package = Package(
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
             ]
         ),
+
+        // MARK: - Test Support
         .target(
             name: "Index Primitives Test Support",
             dependencies: [
