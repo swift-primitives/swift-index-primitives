@@ -35,4 +35,4 @@ public import Ordinal_Primitives
 /// let newIdx = try idx + offset  // Index<Bit> at position 8
 /// let distance = newIdx - idx    // Offset of 3
 /// ```
-public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal>
+public typealias Index<Element: ~Copyable & ~Escapable> = Tagged<Element, Ordinal>

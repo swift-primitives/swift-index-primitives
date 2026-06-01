@@ -4,14 +4,14 @@
     @TitleHeading("Index Primitives")
 }
 
-Why `Element: ~Copyable` in `Index<Element>` is cost-free.
+Why `Element: ~Copyable & ~Escapable` in `Index<Element>` is cost-free.
 
 ## Overview
 
 The full declaration is:
 
 ```swift
-public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal>
+public typealias Index<Element: ~Copyable & ~Escapable> = Tagged<Element, Ordinal>
 ```
 
 Two questions follow naturally: does the `~Copyable` constraint propagate into the `Index<Element>` value's own copyability? And: what is the runtime cost of carrying the phantom parameter?
@@ -30,9 +30,9 @@ The runtime layout of `Index<Bit>` is therefore identical to:
 
 A `Sequence<Index<Bit>>` and a `Sequence<UInt>` use the same memory, the same registers, the same calling convention. The phantom-tag overhead is in the type-checker, not the codegen.
 
-## `Element: ~Copyable` widens, not restricts
+## `Element: ~Copyable & ~Escapable` widens, not restricts
 
-When the constraint reads `Element: ~Copyable`, it does not say "`Element` must be noncopyable" — it says "`Element` is *permitted* to be noncopyable." The `~Copyable` form removes the implicit `Copyable` bound that every generic parameter carries by default (per SE-0427).
+When the constraint reads `Element: ~Copyable & ~Escapable`, it does not say "`Element` must be noncopyable or nonescapable" — it says "`Element` is *permitted* to be either." The `~Copyable & ~Escapable` form removes the implicit `Copyable` and `Escapable` bounds that every generic parameter carries by default (per SE-0427 and SE-0446). Both suppressions are sound for the same reason established above: the phantom is never stored, so it never participates in the value's copyability *or* its escapability.
 
 The practical effect: consumers may use a `~Copyable` tag for `Index<Element>`. For example, a tag that wraps a unique-resource handle:
 

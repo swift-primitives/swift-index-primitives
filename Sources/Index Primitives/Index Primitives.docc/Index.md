@@ -31,7 +31,7 @@ The two forms are interchangeable at type-check time: consumers may write `Tagge
 ## Construction
 
 ```swift
-public typealias Index<Element: ~Copyable> = Tagged<Element, Ordinal>
+public typealias Index<Element: ~Copyable & ~Escapable> = Tagged<Element, Ordinal>
 
 let idx: Index<Bit> = Index(_unchecked: Ordinal(UInt(5)))
 ```
@@ -69,4 +69,4 @@ For call sites that can statically prove bounds, the convention is `try!` with a
 
 `Index<Element>` inherits every protocol conformance defined on `Tagged<Element, Ordinal>` — `Equatable`, `Comparable`, `Hashable`, `Sendable` (when the underlying parameters conform). No conformance is owned by this package; the typealias is purely a type-system disambiguation device.
 
-See <doc:Phantom-Type-Tags> for the cost model of the `Element: ~Copyable` constraint, <doc:Tag-Convention> for the declaration patterns for tag types, and <doc:Architecture> for the package's product layout and dependency closure.
+See <doc:Phantom-Type-Tags> for the cost model of the `Element: ~Copyable & ~Escapable` constraint, <doc:Tag-Convention> for the declaration patterns for tag types, and <doc:Architecture> for the package's product layout and dependency closure.
