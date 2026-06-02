@@ -10,7 +10,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../.."),
-        .package(path: "../../../swift-hash-primitives")
+        .package(url: "https://github.com/swift-primitives/swift-hash-primitives.git", branch: "main")
     ],
     targets: [
         .executableTarget(

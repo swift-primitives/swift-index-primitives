@@ -9,7 +9,7 @@ let package = Package(
         .executable(name: "index-totality", targets: ["index-totality"]),
     ],
     dependencies: [
-        .package(path: "../../../swift-property-primitives"),
+        .package(url: "https://github.com/swift-primitives/swift-property-primitives.git", branch: "main"),
         .package(path: "../../../swift-index-primitives"),
     ],
     targets: [
