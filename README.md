@@ -60,12 +60,11 @@ Requires Swift 6.3.1 and macOS 26 / iOS 26 / tvOS 26 / watchOS 26 / visionOS 26 
 
 ## Architecture
 
-Three library products covering the typealias, its umbrella re-exports, and a Test Support target.
+Two library products: the umbrella and a Test Support target. The separate Core target was consolidated into the umbrella and no longer exists as its own product.
 
 | Product | Target | Purpose |
 |---------|--------|---------|
-| `Index Primitives` | `Sources/Index Primitives/` | Umbrella — re-exports Core and the upstream primitives consumers reach for. The default import for application code. |
-| `Index Primitives Core` | `Sources/Index Primitives Core/` | The `Index<Element>` typealias itself — `Tagged<Element, Ordinal>` — plus the re-exports of the two upstream packages the typealias references directly. |
+| `Index Primitives` | `Sources/Index Primitives/` | The `Index<Element>` typealias itself — `Tagged<Element, Ordinal>` — plus the re-exports of the upstream primitives it references directly. The default import for application code. |
 | `Index Primitives Test Support` | `Tests/Support/` | Re-exports the umbrella plus the upstream test-support spine (Tagged, Ordinal, Cardinal, Affine) for downstream test consumers. |
 
 Foundation-free. No platform conditionals. No concurrency surface — the typealias inherits whatever sendability / copyability `Tagged<Element, Ordinal>` provides.
