@@ -50,7 +50,7 @@ extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
 
     /// The underlying cardinal count (API compatibility with nested struct).
     @inlinable
-    var count: Cardinal { rawValue }
+    package var count: Cardinal { rawValue }
 
     // Note: Can't shadow rawValue, but could provide:
     // @inlinable
@@ -60,20 +60,20 @@ extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
 
     /// Creates a typed count from an unsigned integer.
     @inlinable
-    init(_ rawValue: UInt) {
+    package init(_ rawValue: UInt) {
         self.init(__unchecked: (), Cardinal(rawValue))
     }
 
     /// Creates a typed count from a signed integer.
     /// - Throws: `Cardinal.Error.negativeSource` if negative.
     @inlinable
-    init(_ rawValue: Int) throws(Cardinal.Error) {
+    package init(_ rawValue: Int) throws(Cardinal.Error) {
         self.init(__unchecked: (), try Cardinal(rawValue))
     }
 
     /// Creates a typed count without validation.
     @inlinable
-    init(__unchecked: Void, _ rawValue: Int) {
+    package init(__unchecked: Void, _ rawValue: Int) {
         self.init(__unchecked: (), Cardinal(UInt(rawValue)))
     }
 
@@ -81,13 +81,13 @@ extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
 
     /// The zero count.
     @inlinable
-    static var zero: Self {
+    package static var zero: Self {
         Self(__unchecked: (), Cardinal.zero)
     }
 
     /// The count of one.
     @inlinable
-    static var one: Self {
+    package static var one: Self {
         Self(__unchecked: (), Cardinal.one)
     }
 }
@@ -97,13 +97,13 @@ extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
 extension Tagged where RawValue == Cardinal, Tag: ~Copyable {
     /// Adds two counts (trapping on overflow).
     @inlinable
-    static func + (lhs: Self, rhs: Self) -> Self {
+    package static func + (lhs: Self, rhs: Self) -> Self {
         Self(__unchecked: (), lhs.rawValue + rhs.rawValue)
     }
 
     /// Increments the count by another count.
     @inlinable
-    static func += (lhs: inout Self, rhs: Self) {
+    package static func += (lhs: inout Self, rhs: Self) {
         lhs = lhs + rhs
     }
 }
