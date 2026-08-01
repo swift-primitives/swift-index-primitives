@@ -19,36 +19,45 @@ private enum Byte {}
 
 // MARK: - Index Test Suites
 
-@Suite("Index")
-struct IndexTests {
+@Suite
+struct `Index Tests` {
     @Suite struct Unit {}
-    @Suite struct EdgeCase {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 }
 
 // MARK: - Unit Tests
 
-extension IndexTests.Unit {
+extension `Index Tests`.Unit {
     @Test
     func `init with valid position`() {
         let index: Index<Int> = Index(_unchecked: Ordinal(UInt(5)))
+        // swift-linter:disable:next raw value access
+        // REASON: same-package test asserting the type's own boundary-computed position [CONV-001].
         #expect(index.position == 5)
     }
 
     @Test
     func `init with zero position`() {
         let index: Index<String> = Index(_unchecked: Ordinal(UInt(0)))
+        // swift-linter:disable:next raw value access
+        // REASON: same-package test asserting the type's own boundary-computed position [CONV-001].
         #expect(index.position == 0)
     }
 
     @Test
     func `unchecked init bypasses validation`() {
         let index: Index<Int> = Index(_unchecked: Ordinal(42))
+        // swift-linter:disable:next raw value access
+        // REASON: same-package test asserting the type's own boundary-computed position [CONV-001].
         #expect(index.position == 42)
     }
 
     @Test
     func `position property returns rawValue`() {
         let index: Index<Int> = Index(_unchecked: Ordinal(UInt(10)))
+        // swift-linter:disable:next raw value access
+        // REASON: same-package test asserting the type's own boundary-computed position [CONV-001].
         #expect(index.position == index.underlying)
     }
 
@@ -88,6 +97,8 @@ extension IndexTests.Unit {
         let byteIndex: Index<Byte> = Index(_unchecked: Ordinal(UInt(5)))
 
         // Same position, different types - equality would be compile error
+        // swift-linter:disable:next raw value access
+        // REASON: same-package test asserting the type's own boundary-computed position [CONV-001].
         #expect(bitIndex.position == byteIndex.position)
         // bitIndex == byteIndex // Would not compile - different types
     }
@@ -95,7 +106,7 @@ extension IndexTests.Unit {
 
 // MARK: - Edge Case Tests
 
-extension IndexTests.EdgeCase {
+extension `Index Tests`.`Edge Case` {
     @Test
     func `init with maximum Int position succeeds`() {
         let index: Index<Int> = Index(_unchecked: Ordinal(UInt(Int.max)))

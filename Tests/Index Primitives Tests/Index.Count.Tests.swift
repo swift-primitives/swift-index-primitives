@@ -52,8 +52,14 @@ extension Tagged where Underlying == Cardinal, Tag: ~Copyable {
 
 // MARK: - Tagged Cardinal (Index.Count) Tests
 
-@Suite("Index.Count")
-struct IndexCountTests {
+@Suite
+struct `Index Count Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
+}
+
+extension `Index Count Tests`.Unit {
 
     @Test
     func `Construction from UInt`() {
@@ -137,6 +143,8 @@ struct IndexCountTests {
         let count = ExperimentalCount<Int>(experimentUInt: 5)
 
         // Transform the underlying Cardinal
+        // swift-linter:disable:next raw value access
+        // REASON: same-package transform closure operating on the boundary type's own raw value [CONV-001].
         let doubled = count.map { Cardinal($0.rawValue * 2) }
 
         #expect(doubled.underlying == 10)
