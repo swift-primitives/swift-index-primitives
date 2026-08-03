@@ -18,25 +18,25 @@ public import Index_Primitives
 // INVESTIGATION-ARC.md`). [PKG-BUILD-007]
 #if !hasFeature(Embedded) || compiler(>=6.4)
 
-/// Phantom tag for the cross-module SIL probe below.
-public enum _IndexEmbeddedSILProbeTag {}
+    /// Phantom tag for the cross-module SIL probe below.
+    public enum _IndexEmbeddedSILProbeTag {}
 
-/// Cross-module regression probe for the Swift 6.3.2 Wasm SDK Embedded
-/// `MandatoryPerformanceOptimizations` crash on the
-/// `+ <T> (Tagged<T, Ordinal>, Tagged<T, Cardinal>) -> Tagged<T, Ordinal>`
-/// operator (defined in `swift-ordinal-primitives`, invoked from a
-/// downstream consumer module compiled under Embedded).
-///
-/// The arithmetic `Index<T>.zero + Index<T>.Count.zero` exercises the
-/// operator at a cross-module call site. On Swift 6.4+ this probe is
-/// active under Embedded and validates that the upstream fix holds; on
-/// Swift 6.3.x the probe is guarded out of Embedded only — it still runs
-/// on macOS / Linux / Windows / non-Embedded toolchains.
-///
-/// Tracking: `swift-institute/Issues/swift-issue-embedded-wasm-mandatory-perf-crash/`.
-@inlinable
-public func _indexEmbeddedSILCrashRegressionProbe() {
-    let _: Index<_IndexEmbeddedSILProbeTag> = .zero + .zero
-}
+    /// Cross-module regression probe for the Swift 6.3.2 Wasm SDK Embedded
+    /// `MandatoryPerformanceOptimizations` crash on the
+    /// `+ <T> (Tagged<T, Ordinal>, Tagged<T, Cardinal>) -> Tagged<T, Ordinal>`
+    /// operator (defined in `swift-ordinal-primitives`, invoked from a
+    /// downstream consumer module compiled under Embedded).
+    ///
+    /// The arithmetic `Index<T>.zero + Index<T>.Count.zero` exercises the
+    /// operator at a cross-module call site. On Swift 6.4+ this probe is
+    /// active under Embedded and validates that the upstream fix holds; on
+    /// Swift 6.3.x the probe is guarded out of Embedded only — it still runs
+    /// on macOS / Linux / Windows / non-Embedded toolchains.
+    ///
+    /// Tracking: `swift-institute/Issues/swift-issue-embedded-wasm-mandatory-perf-crash/`.
+    @inlinable
+    public func _indexEmbeddedSILCrashRegressionProbe() {
+        let _: Index<_IndexEmbeddedSILProbeTag> = .zero + .zero
+    }
 
 #endif
