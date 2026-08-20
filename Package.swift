@@ -1,15 +1,15 @@
-// swift-tools-version: 6.3.3
+// swift-tools-version: 6.4
 
 import PackageDescription
 
 let package = Package(
     name: "swift-index-primitives",
     platforms: [
-        .macOS("27"),
-        .iOS("27"),
-        .tvOS("27"),
-        .watchOS("27"),
-        .visionOS("27")
+        .macOS(.v27),
+        .iOS(.v27),
+        .tvOS(.v27),
+        .watchOS(.v27),
+        .visionOS(.v27),
     ],
     products: [
         // MARK: - Umbrella
@@ -25,11 +25,26 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-ordinal-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-cardinal-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-affine-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-comparison-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-ordinal-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-cardinal-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-affine-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-comparison-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-tagged-primitives.git",
+            branch: "main"
+        ),
     ],
     targets: [
         // MARK: - Umbrella (consolidated per [MOD-031]: no separate Core target)
@@ -49,10 +64,22 @@ let package = Package(
             name: "Index Primitives Test Support",
             dependencies: [
                 "Index Primitives",
-                .product(name: "Tagged Primitives Test Support", package: "swift-tagged-primitives"),
-                .product(name: "Ordinal Primitives Test Support", package: "swift-ordinal-primitives"),
-                .product(name: "Cardinal Primitives Test Support", package: "swift-cardinal-primitives"),
-                .product(name: "Affine Primitives Test Support", package: "swift-affine-primitives"),
+                .product(
+                    name: "Tagged Primitives Test Support",
+                    package: "swift-tagged-primitives"
+                ),
+                .product(
+                    name: "Ordinal Primitives Test Support",
+                    package: "swift-ordinal-primitives"
+                ),
+                .product(
+                    name: "Cardinal Primitives Test Support",
+                    package: "swift-cardinal-primitives"
+                ),
+                .product(
+                    name: "Affine Primitives Test Support",
+                    package: "swift-affine-primitives"
+                ),
             ],
             path: "Tests/Support"
         ),
@@ -60,9 +87,9 @@ let package = Package(
             name: "Index Primitives Tests",
             dependencies: [
                 "Index Primitives",
-                "Index Primitives Test Support"
+                "Index Primitives Test Support",
             ]
-        )
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
