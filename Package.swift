@@ -12,13 +12,12 @@ let package = Package(
         .visionOS(.v27),
     ],
     products: [
-        // MARK: - Umbrella
+
         .library(
             name: "Index Primitives",
             targets: ["Index Primitives"]
         ),
 
-        // MARK: - Test Support
         .library(
             name: "Index Primitives Test Support",
             targets: ["Index Primitives Test Support"]
@@ -47,7 +46,7 @@ let package = Package(
         ),
     ],
     targets: [
-        // MARK: - Umbrella (consolidated per [MOD-031]: no separate Core target)
+
         .target(
             name: "Index Primitives",
             dependencies: [
@@ -59,7 +58,6 @@ let package = Package(
             ]
         ),
 
-        // MARK: - Test Support
         .target(
             name: "Index Primitives Test Support",
             dependencies: [

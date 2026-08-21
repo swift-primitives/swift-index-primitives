@@ -1,23 +1,9 @@
-// ===----------------------------------------------------------------------===//
-//
-// This source file is part of the swift-primitives open source project
-//
-// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-primitives project authors
-// Licensed under Apache License v2.0
-//
-// See LICENSE for license information
-//
-// ===----------------------------------------------------------------------===//
-
 import Index_Primitives_Test_Support
 import Testing
 
 @testable import Index_Primitives
 
-// Test tag type
 private enum Numbers {}
-
-// MARK: - Offset Test Suites
 
 @Suite
 struct `Index Offset Tests` {
@@ -25,8 +11,6 @@ struct `Index Offset Tests` {
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
 }
-
-// MARK: - Unit Tests
 
 extension `Index Offset Tests`.Unit {
     @Test
@@ -89,22 +73,18 @@ extension `Index Offset Tests`.Unit {
     }
 }
 
-// MARK: - Edge Case Tests
-
 extension `Index Offset Tests`.`Edge Case` {
     @Test
     func `maximum Int offset`() {
         let offset = Index<Numbers>.Offset(Int.max)
-        // swift-linter:disable:next raw value access
-        // REASON: same-package test asserting the type's own boundary-computed vector [CONV-001].
+
         #expect(offset.vector.rawValue == Int.max)
     }
 
     @Test
     func `minimum Int offset`() {
         let offset = Index<Numbers>.Offset(Int.min)
-        // swift-linter:disable:next raw value access
-        // REASON: same-package test asserting the type's own boundary-computed vector [CONV-001].
+
         #expect(offset.vector.rawValue == Int.min)
     }
 }
