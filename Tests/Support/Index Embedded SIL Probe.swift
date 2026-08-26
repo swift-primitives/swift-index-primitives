@@ -1,4 +1,4 @@
-public import Index_Primitives
+public import Index
 
 #if !hasFeature(Embedded) || compiler(>=6.4)
 

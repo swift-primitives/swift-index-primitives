@@ -1,4 +1,4 @@
-# Index Primitives
+# Index
 
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
 
@@ -11,7 +11,7 @@ A phantom-typed index primitive — `Index<Element>`, a type-safe position into 
 ## Quick Start
 
 ```swift
-import Index_Primitives
+import Index
 
 // Distinct phantom tags per indexing domain
 private enum Bit {}
@@ -31,7 +31,7 @@ let diff  = next - bitIndex                       // Index<Bit>.Offset(3)
 // next + Index<Byte>.Offset(1)   // ❌ compile error
 ```
 
-The phantom tag (`Bit`, `Byte`) is a consumer-defined private enum with no cases. It never appears at runtime, is never stored, and never copies — it only constrains which `Index<Element>` values are *allowed to mix* in arithmetic. The pattern composes with the rest of `swift-tagged-primitives`: tag types declared once are reused across `Index`, `Offset`, `Count`, and any other `Tagged<Tag, …>` typealias the consumer constructs.
+The phantom tag (`Bit`, `Byte`) is a consumer-defined private enum with no cases. It never appears at runtime, is never stored, and never copies — it only constrains which `Index<Element>` values are *allowed to mix* in arithmetic. The pattern composes with the rest of `swift-tagged`: tag types declared once are reused across `Index`, `Offset`, `Count`, and any other `Tagged<Tag, …>` typealias the consumer constructs.
 
 ---
 
@@ -41,7 +41,7 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-primitives/swift-index-primitives.git", branch: "main"),
+    .package(url: "https://github.com/swift-molecules/swift-index.git", branch: "main"),
 ]
 ```
 
@@ -49,7 +49,7 @@ dependencies: [
 .target(
     name: "App",
     dependencies: [
-        .product(name: "Index Primitives", package: "swift-index-primitives"),
+        .product(name: "Index", package: "swift-index"),
     ]
 )
 ```
@@ -64,8 +64,8 @@ Two library products: the umbrella and a Test Support target. The separate Core 
 
 | Product | Target | Purpose |
 |---------|--------|---------|
-| `Index Primitives` | `Sources/Index Primitives/` | The `Index<Element>` typealias itself — `Tagged<Element, Ordinal>` — plus the re-exports of the upstream primitives it references directly. The default import for application code. |
-| `Index Primitives Test Support` | `Tests/Support/` | Re-exports the umbrella plus the upstream test-support spine (Tagged, Ordinal, Cardinal, Affine) for downstream test consumers. |
+| `Index` | `Sources/Index/` | The `Index<Element>` typealias itself — `Tagged<Element, Ordinal>` — plus the re-exports of the upstream primitives it references directly. The default import for application code. |
+| `Index Test Support` | `Tests/Support/` | Re-exports the umbrella plus the upstream test-support spine (Tagged, Ordinal, Cardinal, Affine) for downstream test consumers. |
 
 Foundation-free. No platform conditionals. No concurrency surface — the typealias inherits whatever sendability / copyability `Tagged<Element, Ordinal>` provides.
 
@@ -119,11 +119,11 @@ If a call site can statically prove the bounds are satisfied — typically becau
 
 Direct dependencies:
 
-- [swift-ordinal-primitives](https://github.com/swift-primitives/swift-ordinal-primitives) — `Ordinal`, the non-negative position the `Index<Element>` typealias wraps.
-- [swift-cardinal-primitives](https://github.com/swift-primitives/swift-cardinal-primitives) — `Cardinal`, the non-negative count `Index<Element>.Count` builds on.
-- [swift-affine-primitives](https://github.com/swift-primitives/swift-affine-primitives) — `Affine.Discrete.Vector`, the signed displacement `Index<Element>.Offset` builds on.
-- [swift-tagged-primitives](https://github.com/swift-primitives/swift-tagged-primitives) — `Tagged<Tag, Underlying>`, the phantom-tagging machinery `Index<Element>` is a typealias for.
-- [swift-comparison-primitives](https://github.com/swift-primitives/swift-comparison-primitives) — `Comparison.Protocol`, the `Comparable`-shape conformance `Ordinal` exposes.
+- [swift-ordinal](https://github.com/swift-molecules/swift-ordinal) — `Ordinal`, the non-negative position the `Index<Element>` typealias wraps.
+- [swift-cardinal](https://github.com/swift-molecules/swift-cardinal) — `Cardinal`, the non-negative count `Index<Element>.Count` builds on.
+- [swift-affine](https://github.com/swift-molecules/swift-affine) — `Affine.Discrete.Vector`, the signed displacement `Index<Element>.Offset` builds on.
+- [swift-tagged](https://github.com/swift-molecules/swift-tagged) — `Tagged<Tag, Underlying>`, the phantom-tagging machinery `Index<Element>` is a typealias for.
+- [swift-comparison](https://github.com/swift-molecules/swift-comparison) — `Comparison.Protocol`, the `Comparable`-shape conformance `Ordinal` exposes.
 
 ---
 
