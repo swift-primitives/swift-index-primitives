@@ -56,7 +56,11 @@ let package = Package(
         ),
         .testTarget(
             name: "Index Tests",
-            dependencies: ["Index"]
+            dependencies: [
+                "Index",
+                .product(name: "Ordinal", package: "swift-ordinal"),
+                .product(name: "Tagged", package: "swift-tagged"),
+            ]
         ),
     ],
     swiftLanguageModes: [.v6]
