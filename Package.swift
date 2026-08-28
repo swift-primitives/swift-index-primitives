@@ -25,23 +25,23 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-molecules/swift-ordinal.git",
+            url: "https://github.com/swift-atoms/swift-ordinal.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-cardinal.git",
+            url: "https://github.com/swift-atoms/swift-cardinal.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-affine.git",
+            url: "https://github.com/swift-atoms/swift-affine.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-comparison.git",
+            url: "https://github.com/swift-atoms/swift-comparison.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-molecules/swift-tagged.git",
+            url: "https://github.com/swift-atoms/swift-tagged.git",
             branch: "main"
         ),
     ],
@@ -61,7 +61,7 @@ let package = Package(
         .target(
             name: "Index Test Support",
             dependencies: [
-                "Index",
+                .target(name: "Index"),
                 .product(
                     name: "Tagged Test Support",
                     package: "swift-tagged"
@@ -71,7 +71,7 @@ let package = Package(
                     package: "swift-ordinal"
                 ),
                 .product(
-                    name: "Cardinal Test Support",
+                    name: "Cardinal Standard Library Integration",
                     package: "swift-cardinal"
                 ),
                 .product(
@@ -84,8 +84,8 @@ let package = Package(
         .testTarget(
             name: "Index Tests",
             dependencies: [
-                "Index",
-                "Index Test Support",
+                .target(name: "Index"),
+                .target(name: "Index Test Support"),
             ]
         ),
     ],

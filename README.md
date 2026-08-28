@@ -1,4 +1,4 @@
-# Index
+# Index Primitives
 
 ![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
 
@@ -41,7 +41,7 @@ Add to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-molecules/swift-index.git", branch: "main"),
+    .package(url: "https://github.com/swift-atoms/swift-index.git", branch: "main"),
 ]
 ```
 
@@ -60,11 +60,11 @@ Requires Swift 6.3.1 and macOS 26 / iOS 26 / tvOS 26 / watchOS 26 / visionOS 26 
 
 ## Architecture
 
-Two library products: the umbrella and a Test Support target. The separate Core target was consolidated into the umbrella and no longer exists as its own product.
+Two library products: the umbrella and a Test Support target. The separate target was consolidated into the umbrella and no longer exists as its own product.
 
 | Product | Target | Purpose |
 |---------|--------|---------|
-| `Index` | `Sources/Index/` | The `Index<Element>` typealias itself — `Tagged<Element, Ordinal>` — plus the re-exports of the upstream primitives it references directly. The default import for application code. |
+| `Index Primitives` | `Sources/Index Primitives/` | The `Index<Element>` typealias itself — `Tagged<Element, Ordinal>` — plus the re-exports of the upstream primitives it references directly. The default import for application code. |
 | `Index Test Support` | `Tests/Support/` | Re-exports the umbrella plus the upstream test-support spine (Tagged, Ordinal, Cardinal, Affine) for downstream test consumers. |
 
 Foundation-free. No platform conditionals. No concurrency surface — the typealias inherits whatever sendability / copyability `Tagged<Element, Ordinal>` provides.
@@ -119,11 +119,11 @@ If a call site can statically prove the bounds are satisfied — typically becau
 
 Direct dependencies:
 
-- [swift-ordinal](https://github.com/swift-molecules/swift-ordinal) — `Ordinal`, the non-negative position the `Index<Element>` typealias wraps.
-- [swift-cardinal](https://github.com/swift-molecules/swift-cardinal) — `Cardinal`, the non-negative count `Index<Element>.Count` builds on.
-- [swift-affine](https://github.com/swift-molecules/swift-affine) — `Affine.Discrete.Vector`, the signed displacement `Index<Element>.Offset` builds on.
-- [swift-tagged](https://github.com/swift-molecules/swift-tagged) — `Tagged<Tag, Underlying>`, the phantom-tagging machinery `Index<Element>` is a typealias for.
-- [swift-comparison](https://github.com/swift-molecules/swift-comparison) — `Comparison.Protocol`, the `Comparable`-shape conformance `Ordinal` exposes.
+- [swift-ordinal](https://github.com/swift-atoms/swift-ordinal) — `Ordinal`, the non-negative position the `Index<Element>` typealias wraps.
+- [swift-cardinal](https://github.com/swift-atoms/swift-cardinal) — `Cardinal`, the non-negative count `Index<Element>.Count` builds on.
+- [swift-affine](https://github.com/swift-atoms/swift-affine) — `Affine.Discrete.Vector`, the signed displacement `Index<Element>.Offset` builds on.
+- [swift-tagged](https://github.com/swift-atoms/swift-tagged) — `Tagged<Tag, Underlying>`, the phantom-tagging machinery `Index<Element>` is a typealias for.
+- [swift-comparison](https://github.com/swift-atoms/swift-comparison) — `Comparison.Protocol`, the `Comparable`-shape conformance `Ordinal` exposes.
 
 ---
 
