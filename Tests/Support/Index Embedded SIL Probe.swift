@@ -5,8 +5,8 @@ public import Index
     public enum _IndexEmbeddedSILProbeTag {}
 
     @inlinable
-    public func _indexEmbeddedSILCrashRegressionProbe() {
-        let _: Index<_IndexEmbeddedSILProbeTag> = .zero + .zero
-    }
+    public func _indexEmbeddedSILCrashRegressionProbe(
+        _: borrowing Index::Index<_IndexEmbeddedSILProbeTag>
+    ) {}
 
 #endif

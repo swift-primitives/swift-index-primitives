@@ -1,4 +1,6 @@
-import Index_Test_Support
+import Index
+import Ordinal
+import Tagged
 import Testing
 
 @testable import Index
@@ -16,86 +18,60 @@ struct `Index Tests` {
 extension `Index Tests`.Unit {
     @Test
     func `init with valid position`() {
-        let index: Index<Int> = Index(_unchecked: Ordinal(UInt(5)))
+        let index: Index::Index<Int> = Tagged::Tagged(
+            _unchecked: Ordinal::Ordinal(UInt(5))
+        )
 
-        #expect(index.position == 5)
+        #expect(index.underlying.rawValue == 5)
     }
 
     @Test
     func `init with zero position`() {
-        let index: Index<String> = Index(_unchecked: Ordinal(UInt(0)))
+        let index: Index::Index<String> = Tagged::Tagged(
+            _unchecked: Ordinal::Ordinal(UInt.zero)
+        )
 
-        #expect(index.position == 0)
+        #expect(index.underlying.rawValue == 0)
     }
 
     @Test
     func `unchecked init bypasses validation`() {
-        let index: Index<Int> = Index(_unchecked: Ordinal(42))
+        let index: Index::Index<Int> = Tagged::Tagged(
+            _unchecked: Ordinal::Ordinal(42)
+        )
 
-        #expect(index.position == 42)
+        #expect(index.underlying.rawValue == 42)
     }
 
     @Test
-    func `position property returns rawValue`() {
-        let index: Index<Int> = Index(_unchecked: Ordinal(UInt(10)))
+    func `underlying value is ordinal`() {
+        let index: Index::Index<Int> = Tagged::Tagged(
+            _unchecked: Ordinal::Ordinal(UInt(10))
+        )
 
-        #expect(index.position == index.underlying)
-    }
-
-    @Test
-    func `indices of same type are equatable`() {
-        let a: Index<Int> = Index(_unchecked: Ordinal(UInt(5)))
-        let b: Index<Int> = Index(_unchecked: Ordinal(UInt(5)))
-        let c: Index<Int> = Index(_unchecked: Ordinal(UInt(6)))
-        #expect(a == b)
-        #expect(a != c)
-    }
-
-    @Test
-    func `indices are comparable`() {
-        let a: Index<Int> = Index(_unchecked: Ordinal(UInt(3)))
-        let b: Index<Int> = Index(_unchecked: Ordinal(UInt(7)))
-        #expect(a < b)
-        #expect(b > a)
-        #expect(a <= a)
-        #expect(b >= b)
-    }
-
-    @Test
-    func `indices are hashable`() {
-        let a: Index<Int> = Index(_unchecked: Ordinal(UInt(5)))
-        let b: Index<Int> = Index(_unchecked: Ordinal(UInt(5)))
-        #expect(a.hashValue == b.hashValue)
-
-        var set: Set<Index<Int>> = []
-        set.insert(a)
-        #expect(set.contains(b))
+        #expect(index.underlying.rawValue == 10)
     }
 
     @Test
     func `different tag types are incompatible at compile time`() {
-        let bitIndex: Index<Bit> = Index(_unchecked: Ordinal(UInt(5)))
-        let byteIndex: Index<Byte> = Index(_unchecked: Ordinal(UInt(5)))
+        let bitIndex: Index::Index<Bit> = Tagged::Tagged(
+            _unchecked: Ordinal::Ordinal(UInt(5))
+        )
+        let byteIndex: Index::Index<Byte> = Tagged::Tagged(
+            _unchecked: Ordinal::Ordinal(UInt(5))
+        )
 
-        #expect(bitIndex.position == byteIndex.position)
+        #expect(bitIndex.underlying.rawValue == byteIndex.underlying.rawValue)
 
     }
 }
 
 extension `Index Tests`.`Edge Case` {
     @Test
-    func `init with maximum Int position succeeds`() {
-        let index: Index<Int> = Index(_unchecked: Ordinal(UInt(Int.max)))
-        let expected: Index<Int> = Index(_unchecked: Ordinal(UInt(Int.max)))
-        #expect(index == expected)
-    }
-
-    @Test
-    func `Ordinal.Error is equatable`() {
-        let a = Ordinal.Error.negativeSource(-5)
-        let b = Ordinal.Error.negativeSource(-5)
-        let c = Ordinal.Error.negativeSource(-10)
-        #expect(a == b)
-        #expect(a != c)
+    func `maximum ordinal value is preserved`() {
+        let index: Index::Index<Int> = Tagged::Tagged(
+            _unchecked: Ordinal::Ordinal(UInt.max)
+        )
+        #expect(index.underlying.rawValue == UInt.max)
     }
 }

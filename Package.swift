@@ -29,18 +29,6 @@ let package = Package(
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-cardinal.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-atoms/swift-affine.git",
-            branch: "main"
-        ),
-        .package(
-            url: "https://github.com/swift-atoms/swift-comparison.git",
-            branch: "main"
-        ),
-        .package(
             url: "https://github.com/swift-atoms/swift-tagged.git",
             branch: "main"
         ),
@@ -51,33 +39,13 @@ let package = Package(
             name: "Index",
             dependencies: [
                 .product(name: "Ordinal", package: "swift-ordinal"),
-                .product(name: "Cardinal", package: "swift-cardinal"),
-                .product(name: "Affine", package: "swift-affine"),
-                .product(name: "Comparison", package: "swift-comparison"),
                 .product(name: "Tagged", package: "swift-tagged"),
             ]
         ),
-
         .target(
             name: "Index Test Support",
             dependencies: [
                 .target(name: "Index"),
-                .product(
-                    name: "Tagged Test Support",
-                    package: "swift-tagged"
-                ),
-                .product(
-                    name: "Ordinal Test Support",
-                    package: "swift-ordinal"
-                ),
-                .product(
-                    name: "Cardinal Standard Library Integration",
-                    package: "swift-cardinal"
-                ),
-                .product(
-                    name: "Affine Test Support",
-                    package: "swift-affine"
-                ),
             ],
             path: "Tests/Support"
         ),
@@ -85,7 +53,8 @@ let package = Package(
             name: "Index Tests",
             dependencies: [
                 .target(name: "Index"),
-                .target(name: "Index Test Support"),
+                .product(name: "Ordinal", package: "swift-ordinal"),
+                .product(name: "Tagged", package: "swift-tagged"),
             ]
         ),
     ],
