@@ -1,6 +1,6 @@
 import Testing
 
-@testable import Index_Primitives
+@testable import Index
 
 typealias ExperimentalCount<Tag: ~Copyable> = Tagged<Tag, Cardinal>
 

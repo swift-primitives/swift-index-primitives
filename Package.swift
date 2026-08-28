@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-index-primitives",
+    name: "swift-index",
     platforms: [
         .macOS(.v27),
         .iOS(.v27),
@@ -14,78 +14,78 @@ let package = Package(
     products: [
 
         .library(
-            name: "Index Primitives",
-            targets: ["Index Primitives"]
+            name: "Index",
+            targets: ["Index"]
         ),
 
         .library(
-            name: "Index Primitives Test Support",
-            targets: ["Index Primitives Test Support"]
+            name: "Index Test Support",
+            targets: ["Index Test Support"]
         ),
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-ordinal-primitives.git",
+            url: "https://github.com/swift-atoms/swift-ordinal.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-cardinal-primitives.git",
+            url: "https://github.com/swift-atoms/swift-cardinal.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-affine-primitives.git",
+            url: "https://github.com/swift-atoms/swift-affine.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-comparison-primitives.git",
+            url: "https://github.com/swift-atoms/swift-comparison.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-tagged-primitives.git",
+            url: "https://github.com/swift-atoms/swift-tagged.git",
             branch: "main"
         ),
     ],
     targets: [
 
         .target(
-            name: "Index Primitives",
+            name: "Index",
             dependencies: [
-                .product(name: "Ordinal Primitives", package: "swift-ordinal-primitives"),
-                .product(name: "Cardinal Primitives", package: "swift-cardinal-primitives"),
-                .product(name: "Affine Primitives", package: "swift-affine-primitives"),
-                .product(name: "Comparison Primitives", package: "swift-comparison-primitives"),
-                .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
+                .product(name: "Ordinal", package: "swift-ordinal"),
+                .product(name: "Cardinal", package: "swift-cardinal"),
+                .product(name: "Affine", package: "swift-affine"),
+                .product(name: "Comparison", package: "swift-comparison"),
+                .product(name: "Tagged", package: "swift-tagged"),
             ]
         ),
 
         .target(
-            name: "Index Primitives Test Support",
+            name: "Index Test Support",
             dependencies: [
-                "Index Primitives",
+                .target(name: "Index"),
                 .product(
-                    name: "Tagged Primitives Test Support",
-                    package: "swift-tagged-primitives"
+                    name: "Tagged Test Support",
+                    package: "swift-tagged"
                 ),
                 .product(
-                    name: "Ordinal Primitives Test Support",
-                    package: "swift-ordinal-primitives"
+                    name: "Ordinal Test Support",
+                    package: "swift-ordinal"
                 ),
                 .product(
-                    name: "Cardinal Primitives Test Support",
-                    package: "swift-cardinal-primitives"
+                    name: "Cardinal Standard Library Integration",
+                    package: "swift-cardinal"
                 ),
                 .product(
-                    name: "Affine Primitives Test Support",
-                    package: "swift-affine-primitives"
+                    name: "Affine Test Support",
+                    package: "swift-affine"
                 ),
             ],
             path: "Tests/Support"
         ),
         .testTarget(
-            name: "Index Primitives Tests",
+            name: "Index Tests",
             dependencies: [
-                "Index Primitives",
-                "Index Primitives Test Support",
+                .target(name: "Index"),
+                .target(name: "Index Test Support"),
             ]
         ),
     ],

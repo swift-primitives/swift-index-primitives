@@ -1,7 +1,7 @@
-import Index_Primitives_Test_Support
+import Index_Test_Support
 import Testing
 
-@testable import Index_Primitives
+@testable import Index
 
 private enum Numbers {}
 
