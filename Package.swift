@@ -12,54 +12,80 @@ let package = Package(
         .visionOS(.v27),
     ],
     products: [
+
         .library(
             name: "Index",
             targets: ["Index"]
         ),
+
         .library(
-            name: "Index Standard Library Integration",
-            targets: ["Index Standard Library Integration"]
-        ),
-        .library(
-            name: "Index Apple Foundation Integration",
-            targets: ["Index Apple Foundation Integration"]
+            name: "Index Test Support",
+            targets: ["Index Test Support"]
         ),
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-atoms/swift-ordinal.git",
+            url: "https://github.com/swift-molecules/swift-ordinal.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-atoms/swift-tagged.git",
+            url: "https://github.com/swift-molecules/swift-cardinal.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-affine.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-comparison.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-tagged.git",
             branch: "main"
         ),
     ],
     targets: [
+
         .target(
             name: "Index",
             dependencies: [
                 .product(name: "Ordinal", package: "swift-ordinal"),
+                .product(name: "Cardinal", package: "swift-cardinal"),
+                .product(name: "Affine", package: "swift-affine"),
+                .product(name: "Comparison", package: "swift-comparison"),
                 .product(name: "Tagged", package: "swift-tagged"),
             ]
         ),
+
         .target(
-            name: "Index Standard Library Integration",
-            dependencies: ["Index"]
-        ),
-        .target(
-            name: "Index Apple Foundation Integration",
+            name: "Index Test Support",
             dependencies: [
                 "Index",
-                "Index Standard Library Integration",
-            ]
+                .product(
+                    name: "Tagged Test Support",
+                    package: "swift-tagged"
+                ),
+                .product(
+                    name: "Ordinal Test Support",
+                    package: "swift-ordinal"
+                ),
+                .product(
+                    name: "Cardinal Test Support",
+                    package: "swift-cardinal"
+                ),
+                .product(
+                    name: "Affine Test Support",
+                    package: "swift-affine"
+                ),
+            ],
+            path: "Tests/Support"
         ),
         .testTarget(
             name: "Index Tests",
             dependencies: [
                 "Index",
-                .product(name: "Ordinal", package: "swift-ordinal"),
-                .product(name: "Tagged", package: "swift-tagged"),
+                "Index Test Support",
             ]
         ),
     ],
