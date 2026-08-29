@@ -39,6 +39,7 @@ let package = Package(
             name: "Index",
             dependencies: [
                 .product(name: "Ordinal", package: "swift-ordinal"),
+                .product(name: "Ordinal Protocol", package: "swift-ordinal"),
                 .product(name: "Tagged", package: "swift-tagged"),
             ]
         ),
